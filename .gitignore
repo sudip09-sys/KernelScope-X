@@ -1,0 +1,35 @@
+# CMake and IDE-generated
+/build/
+/out/
+/cmake-build-*/
+CMakeUserPresets.json
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.pdb
+*.ilk
+*.obj
+*.pch
+*.exe
+*.dll
+*.log
+
+# Qt generated
+/qmlcache/
+/qmltypes/
+*.qmlc
+*.jsc
+
+# Artifacts / local telemetry
+*.db
+*.db-wal
+*.db-shm
+*.jsonl
+/recordings/
+/reports/generated/
+
+# OS
+.DS_Store
+Thumbs.db
