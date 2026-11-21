@@ -1,9 +1,9 @@
-# KernelScope X — Phase 1 Architecture
+# KernelScope X — Architecture
 
 ## Layers
 
 - **QML / Qt Quick:** application shell, sidebar, live statistics, process viewer, diagnostic timeline, scheduling lab.
-- **C++ models:** `ProcessModel` owns the latest typed snapshot; `ProcessFilterModel` handles search/sort; `MonitorController` publishes metrics, in-memory histories and process events.
+- **C++ models:** `ProcessModel` maintains PID-ordered rows and emits changes for affected rows and roles; independent `ProcessFilterModel` instances serve the explorer and Overview; `MonitorController` publishes metrics, in-memory histories and process events.
 - **Dedicated collector thread:** `WindowsCollector` collects real Win32 process and system statistics away from the GUI thread and emits immutable `SystemSnapshot` values through Qt queued signals.
 - **Windows APIs:** Tool Help snapshot for process/PPID/thread-count enumeration; process time samples for CPU; `GetSystemTimes` for whole-system CPU; `GlobalMemoryStatusEx` for RAM; permitted `GetProcessMemoryInfo` for working set.
 - **Independent simulation engine:** `SchedulingSimulator` calculates FCFS, non-preemptive SJF and RR schedules using user-provided sample workloads. It never changes Windows scheduling.
@@ -34,7 +34,7 @@ The QML interface never invokes Win32 enumerators. Signal/slot delivery ensures 
 
 ## Safety boundaries
 
-The read-only collector runs with the user's normal Windows privileges. Optional process termination requires direct user selection and explicit confirmation, uses Win32 access checks, blocks known critical names and Windows-critical processes, and validates both executable identity and creation timestamp immediately before acting. It does not elevate privileges.
+The read-only collector runs with the user's normal Windows privileges. Optional process termination requires direct user selection and explicit confirmation, uses Win32 access checks, blocks known critical names and Windows-critical processes, and validates both executable identity and creation timestamp immediately before acting. The confirmation captures the selected identity as a decimal string, preserving all 64 bits through QML. It does not elevate privileges.
 
 Exported snapshot JSON files are local, in the user's `Documents/KernelScope-X` directory. They may include process names and full executable paths. No automatic network transmission or permanent activity database exists in this milestone.
 

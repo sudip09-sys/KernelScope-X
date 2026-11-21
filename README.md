@@ -2,7 +2,7 @@
 
 **Native System Intelligence & Process Diagnostics**  
 **Project type:** Advanced Operating Systems project / Windows-native desktop application  
-**Status:** Phase 1 source scaffold created (native Windows build and runtime verification pending)  
+**Status:** v0.2.0 development branch awaiting Windows acceptance  
 **Project owner:** SAH SUDIP  
 **Student ID:** 202637610  
 **Primary platform:** Windows 11 x64  
@@ -12,11 +12,11 @@
 
 ---
 
-## Current implementation (v0.1.0 source milestone)
+## Current implementation (v0.2.0 development milestone)
 
 This package now includes C++20 source, a Qt Quick/QML desktop interface, Windows telemetry collection on a background QThread, search/sort process models, process inspection, CPU trend graph, local diagnostic event history, a confirmation-gated process-end action, JSON snapshot export, and a **separate** FCFS/SJF/RR scheduling simulator with Qt Test cases.
 
-**What is not verified yet:** The code has **not** been compiled or launched on the user's Windows computer; the required Visual Studio + Qt 6 toolchain was not installed/accessible in this environment. Do not claim it runs, that every UI element has been tested, or that a production installer exists. The complete steps to build and test are in [`docs/SETUP_WINDOWS.md`](docs/SETUP_WINDOWS.md), with a practical test plan in [`docs/TEST_PLAN.md`](docs/TEST_PLAN.md).
+The native interface uses a shared dark Qt theme and scrollable pages that reflow at narrower window sizes. The process explorer keeps selection tied to a process instance across sorting and refreshes, shows filtered counts, and keeps the Overview CPU ranking independent. See the [Windows setup guide](docs/SETUP_WINDOWS.md) and [test plan](docs/TEST_PLAN.md) for verification.
 
 **Implemented source modules:**
 - `app/main.cpp` and `app/qml/` — native window, navigation, Overview, Processes, Diagnostics and OS Laboratory pages
@@ -25,7 +25,7 @@ This package now includes C++20 source, a Qt Quick/QML desktop interface, Window
 - `src/models/` — queryable/sortable process list and selected-process metadata
 - `src/oslab/` — isolated scheduling algorithms, with [`tests/tst_scheduling.cpp`](tests/tst_scheduling.cpp)
 
-**Remaining later phases:** detailed thread and network inspector, ETW, persistent SQLite time-machine, deadlock/race-condition animations, signed installer, native runtime proof, academic report/screenshots. The full roadmap below describes the desired finished system; it is **not** a list of features already available.
+**Remaining later phases:** detailed thread and network inspector, ETW, persistent SQLite time-machine, deadlock/race-condition animations, signed installer, academic report/screenshots. The full roadmap below describes the desired finished system; it is **not** a list of features already available.
 
 **Quick start on Windows:** Install Visual Studio C++ tools and a compatible Qt 6 MSVC kit, then use:
 
@@ -427,16 +427,16 @@ The final project succeeds when it is **installable, useful and explainable**, n
 - [x] Project concept chosen: **KernelScope X**.
 - [x] Native Windows architecture and technology direction selected.
 - [x] Feature roadmap, safety constraints and report structure documented.
-- [ ] Create actual repository and CMake/Qt project scaffold.
+- [x] Create the repository and CMake/Qt project.
 - [ ] Build and run the first native Windows window.
-- [ ] Implement collectors and process table.
+- [x] Implement collectors and process table.
 - [ ] Validate displayed readings against Windows system tools.
-- [ ] Add process inspection and additional modules.
+- [x] Implement process inspection, diagnostics and scheduling simulation.
 - [ ] Create authentic demo evidence, installer and final project report.
 
 ### Immediate next step
 
-**M1 / Step 1:** Confirm Windows development setup (Visual Studio C++ Desktop Development workload, CMake, Qt 6 with a matching compiler kit) and create the source repository. Then build a minimal native Qt Quick application **before** beginning low-level collectors or visual effects.
+Run the v0.2.0 Windows acceptance checks from the development branch before merging.
 
 ---
 

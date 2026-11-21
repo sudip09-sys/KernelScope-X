@@ -42,8 +42,11 @@ public:
     QString error() const { return snapshot_.error; }
     void setPaused(bool value);
     Q_INVOKABLE void refresh();
+    Q_INVOKABLE void refreshOnce();
     Q_INVOKABLE QString exportSnapshot();
-    Q_INVOKABLE QString terminateSelectedProcess(qint64 pid, const QString &expectedName);
+    Q_INVOKABLE bool canTerminate(qint64 pid, const QString &name, const QString &identity) const;
+    Q_INVOKABLE QString terminateSelectedProcess(qint64 pid, const QString &expectedName,
+                                                 const QString &expectedIdentity);
 signals:
     void statsChanged();
     void alertsChanged();

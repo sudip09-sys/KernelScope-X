@@ -6,6 +6,8 @@ ColumnLayout {
     property string subheading: ""
     spacing: 3
     Text {
+        Layout.fillWidth: true
+        wrapMode: Text.WordWrap
         text: heading; color: "#f4f8ff"
         font.pixelSize: 26; font.weight: Font.Bold
     }

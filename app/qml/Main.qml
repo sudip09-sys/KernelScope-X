@@ -8,19 +8,37 @@ ApplicationWindow {
     id: window
     width: 1370
     height: 860
-    minimumWidth: 960
-    minimumHeight: 620
+    minimumWidth: 800
+    minimumHeight: 540
     visible: true
     title: "KernelScope X — Native System Intelligence"
     color: "#0c1424"
+    readonly property bool compact: width < 1050
     property int pageIndex: 0
+    font.family: "Segoe UI"
+    font.pixelSize: 13
+    palette.window: "#121d2d"
+    palette.windowText: "#eaf1fc"
+    palette.base: "#101a2a"
+    palette.alternateBase: "#19273d"
+    palette.text: "#eaf1fc"
+    palette.button: "#23324a"
+    palette.buttonText: "#eaf1fc"
+    palette.placeholderText: "#94a8c5"
+    palette.highlight: "#287d78"
+    palette.highlightedText: "#ffffff"
+    palette.mid: "#344760"
+    palette.dark: "#101a2a"
+    palette.light: "#3e5472"
+    palette.disabled.text: "#8492a8"
+    palette.disabled.buttonText: "#8492a8"
 
     RowLayout {
         anchors.fill: parent
         spacing: 0
 
         Rectangle {
-            Layout.preferredWidth: 235
+            Layout.preferredWidth: window.compact ? 176 : 222
             Layout.fillHeight: true
             color: "#101a2b"
             border.color: "#23324b"
@@ -33,7 +51,7 @@ ApplicationWindow {
                     Layout.bottomMargin: 26
                     spacing: 11
                     Rectangle {
-                        width: 38; height: 38; radius: 12
+                        Layout.preferredWidth: 38; Layout.preferredHeight: 38; radius: 12
                         color: "#173c41"
                         Text {
                             anchors.centerIn: parent
@@ -45,10 +63,9 @@ ApplicationWindow {
                     Column {
                         spacing: 1
                         Text { text: "KERNELSCOPE"; font.bold: true; font.pixelSize: 16; color: "#f4f8ff" }
-                        Text { text: "X  /  SYSTEM INTELLIGENCE"; font.pixelSize: 9; color: "#7f93ae"; font.letterSpacing: 0.7 }
+                        Text { text: "X  /  v0.2.0"; font.pixelSize: 11; color: "#9aacca" }
                     }
                 }
-                Text { text: "WORKSPACE"; color: "#7386a4"; font.pixelSize: 10; font.weight: Font.Bold; Layout.leftMargin: 12 }
                 Repeater {
                     model: [
                         { title: "Overview", glyph: "◉" },
@@ -65,13 +82,12 @@ ApplicationWindow {
                     }
                 }
                 Item { Layout.fillHeight: true }
-                Rectangle { Layout.fillWidth: true; height: 1; color: "#2a3850" }
+                Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: "#2a3850" }
                 RowLayout {
                     spacing: 7
-                    Rectangle { width: 7; height: 7; radius: 4; color: monitor.paused ? "#e0ae66" : "#21d9bc" }
-                    Text { text: monitor.paused ? "COLLECTION PAUSED" : "LIVE WINDOWS TELEMETRY"; color: "#a3b2ce"; font.pixelSize: 10 }
+                    Rectangle { Layout.preferredWidth: 7; Layout.preferredHeight: 7; radius: 4; color: monitor.paused ? "#e0ae66" : "#21d9bc" }
+                    Text { text: monitor.paused ? "Collection paused" : "Live telemetry"; color: "#a3b2ce"; font.pixelSize: 10 }
                 }
-                Text { text: "Local only • Read-only by default"; color: "#6e819f"; font.pixelSize: 10; Layout.bottomMargin: 10 }
             }
         }
 
@@ -95,19 +111,17 @@ ApplicationWindow {
                         font.pixelSize: 15
                         font.weight: Font.DemiBold
                         Layout.fillWidth: true
+                        elide: Text.ElideRight
                     }
                     Text { text: monitor.updated ? "Updated " + monitor.updated : "Starting collector…"; color: "#899db9"; font.pixelSize: 12 }
                     Button {
                         text: monitor.paused ? "Resume" : "Pause"
                         onClicked: monitor.paused = !monitor.paused
-                        background: Rectangle { color: "#243149"; border.color: "#364862"; radius: 9 }
-                        contentItem: Text { text: parent.text; color: "#e6efff"; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
                     }
                     Button {
                         text: "Refresh"
-                        onClicked: { monitor.paused = false; monitor.refresh() }
-                        background: Rectangle { color: "#126f69"; radius: 9 }
-                        contentItem: Text { text: parent.text; color: "white"; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                        highlighted: true
+                        onClicked: monitor.refreshOnce()
                     }
                 }
             }

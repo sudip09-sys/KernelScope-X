@@ -3,107 +3,212 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import "../components"
 
-Item {
+PageScroll {
     id: root
-    property int selectedPid: -1
-    property string selectedName: ""
-    property var selected: processModel.details(selectedPid)
+    property double selectedPid: -1
+    property string selectedIdentity: ""
+    property var selected: ({ found: false })
     property string actionMessage: ""
+    readonly property bool canEnd: selected.found &&
+                                   monitor.canTerminate(selectedPid, selected.name, selectedIdentity)
+    readonly property bool compact: availableWidth < 830
+
+    function selectProcess(pid, identity) {
+        selectedPid = pid
+        selectedIdentity = identity
+        selected = processModel.details(pid)
+        actionMessage = ""
+    }
 
     Connections {
-        target: processModel
-        function onModelReset() { root.selected = processModel.details(root.selectedPid) }
+        target: monitor
+        function onStatsChanged() {
+            if (root.selectedPid < 0)
+                return
+            const latest = processModel.details(root.selectedPid)
+            if (!latest.found || !root.selectedIdentity || latest.identity !== root.selectedIdentity) {
+                root.selectedPid = -1
+                root.selectedIdentity = ""
+                root.selected = ({ found: false })
+                root.actionMessage = "Selection cleared after the process changed or could no longer be verified."
+                endDialog.close()
+                return
+            }
+            root.selected = latest
+        }
     }
 
     ColumnLayout {
-        anchors.fill: parent; anchors.margins: 26; spacing: 16
+        width: root.availableWidth
+        spacing: 16
+
         SectionHeader {
             Layout.fillWidth: true
-            heading: "Process Explorer"
-            subheading: "Inspect running Windows processes. Restricted fields are shown as unavailable rather than estimated."
+            heading: "Process explorer"
+            subheading: "Find a process by name, PID or parent PID and inspect its current resource usage."
         }
+
         RowLayout {
-            Layout.fillWidth: true; spacing: 12
+            Layout.fillWidth: true
+            spacing: 10
+
             TextField {
                 id: search
                 Layout.fillWidth: true
-                placeholderText: "Search process name, PID or parent PID…"
-                color: "#f3f7ff"
-                placeholderTextColor: "#7188a8"
+                Layout.preferredHeight: 36
+                Accessible.name: "Search processes"
+                placeholderText: "Name, PID or parent PID"
+                selectByMouse: true
                 onTextChanged: processProxy.search = text
-                background: Rectangle { color: "#152139"; radius: 10; border.color: search.activeFocus ? "#25cdb1" : "#2c3b55" }
+                Keys.onEscapePressed: clear()
+            }
+            Button {
+                text: "Clear"
+                enabled: search.length > 0
+                onClicked: {
+                    search.clear()
+                    search.forceActiveFocus()
+                }
             }
             ComboBox {
-                id: sorter
-                Layout.preferredWidth: 190
+                Layout.preferredWidth: 138
+                Layout.preferredHeight: 36
+                Accessible.name: "Process sort order"
                 model: ["CPU: highest", "Memory: highest", "Name: A–Z", "PID: ascending"]
                 onActivated: processProxy.setSortMode(currentIndex)
             }
-            Text { text: monitor.processes + " visible"; color: "#8297b6"; font.pixelSize: 12 }
         }
-        RowLayout {
-            Layout.fillWidth: true; Layout.fillHeight: true; spacing: 14
+
+        GridLayout {
+            Layout.fillWidth: true
+            columns: root.compact ? 1 : 2
+            columnSpacing: 14
+            rowSpacing: 14
+
             Rectangle {
-                Layout.fillWidth: true; Layout.fillHeight: true
-                color: "#152139"; radius: 14; border.color: "#2a3954"
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignTop
+                Layout.preferredHeight: root.compact ? 332 : Math.max(390, root.height - 155)
+                color: "#152139"
+                radius: 12
+                border.color: "#2a3954"
+
                 ColumnLayout {
-                    anchors.fill: parent; anchors.margins: 10; spacing: 7
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 6
+
+                    Label {
+                        Layout.leftMargin: 10
+                        text: list.count + " of " + monitor.processes + " processes"
+                        color: "#a7bad5"
+                    }
                     Rectangle {
-                        Layout.fillWidth: true; height: 35
-                        color: "#1d2b43"; radius: 7
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 34
+                        color: "#202e46"
+                        radius: 6
+
                         RowLayout {
-                            anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 10
-                            Text { text: "NAME"; Layout.fillWidth: true; color: "#92a6c5"; font.pixelSize: 10; font.bold: true }
-                            Text { text: "PID"; Layout.preferredWidth: 62; color: "#92a6c5"; font.pixelSize: 10; font.bold: true }
-                            Text { text: "CPU"; Layout.preferredWidth: 65; color: "#92a6c5"; font.pixelSize: 10; font.bold: true }
-                            Text { text: "RAM"; Layout.preferredWidth: 85; color: "#92a6c5"; font.pixelSize: 10; font.bold: true }
-                            Text { text: "THREADS"; Layout.preferredWidth: 63; color: "#92a6c5"; font.pixelSize: 10; font.bold: true }
+                            anchors.fill: parent
+                            anchors.leftMargin: 12
+                            anchors.rightMargin: 18
+                            spacing: 8
+
+                            Label { text: "Process"; Layout.fillWidth: true; font.bold: true }
+                            Label { text: "PID"; Layout.preferredWidth: 61; font.bold: true }
+                            Label { text: "CPU"; Layout.preferredWidth: 59; font.bold: true }
+                            Label { text: "Working set"; Layout.preferredWidth: 92; font.bold: true }
+                            Label { text: "Threads"; Layout.preferredWidth: 54; font.bold: true }
                         }
                     }
-                    ListView {
-                        id: list
-                        Layout.fillWidth: true; Layout.fillHeight: true
-                        model: processProxy; clip: true
-                        ScrollBar.vertical: ScrollBar {}
-                        delegate: Rectangle {
-                            width: list.width; height: 39; radius: 7
-                            color: root.selectedPid === model.pid ? "#234456" : (mouse.containsMouse ? "#1d3049" : (index % 2 ? "transparent" : "#19263a"))
-                            MouseArea {
-                                id: mouse
-                                anchors.fill: parent; hoverEnabled: true
-                                onClicked: {
-                                    root.selectedPid = model.pid
-                                    root.selectedName = model.name
-                                    root.selected = processModel.details(model.pid)
-                                    root.actionMessage = ""
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+
+                        ListView {
+                            id: list
+                            anchors.fill: parent
+                            model: processProxy
+                            clip: true
+                            reuseItems: true
+                            currentIndex: -1
+                            ScrollBar.vertical: ScrollBar {}
+
+                            delegate: ItemDelegate {
+                                id: row
+                                required property int index
+                                required property double pid
+                                required property string identity
+                                required property string name
+                                required property real cpu
+                                required property var memoryMb
+                                required property bool memoryAvailable
+                                required property double threadCount
+                                readonly property bool selectedRow: root.selectedPid === pid &&
+                                                                    root.selectedIdentity === identity
+                                width: list.width - 6
+                                height: 39
+                                Accessible.name: name + ", PID " + pid
+                                onClicked: root.selectProcess(pid, identity)
+                                background: Rectangle {
+                                    radius: 6
+                                    color: row.selectedRow ? "#20454d" : row.hovered ? "#22334e"
+                                                           : row.index % 2 ? "#18263c" : "transparent"
+                                    border.color: row.visualFocus ? "#62dfce" : "transparent"
                                 }
+                                contentItem: RowLayout {
+                                    spacing: 8
+                                    Label { text: row.name; textFormat: Text.PlainText; Layout.fillWidth: true; elide: Text.ElideRight }
+                                    Label { text: row.pid; Layout.preferredWidth: 61; color: "#afc0d9" }
+                                    Label { text: row.cpu.toFixed(1) + "%"; Layout.preferredWidth: 59; color: "#6fe8d3" }
+                                    Label {
+                                        Layout.preferredWidth: 92
+                                        text: row.memoryAvailable ? Number(row.memoryMb).toFixed(1) + " MiB" : "—"
+                                    }
+                                    Label { text: row.threadCount; Layout.preferredWidth: 54 }
+                                }
+                                leftPadding: 12
+                                rightPadding: 12
                             }
-                            RowLayout {
-                                anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 10
-                                spacing: 8
-                                Text { text: model.name; Layout.fillWidth: true; elide: Text.ElideRight; color: "#eaf1ff"; font.pixelSize: 12 }
-                                Text { text: model.pid; Layout.preferredWidth: 62; color: "#a1b1cc"; font.pixelSize: 11 }
-                                Text { text: Number(model.cpu).toFixed(1) + "%"; Layout.preferredWidth: 65; color: "#31ddbf"; font.pixelSize: 11 }
-                                Text { text: model.memoryAvailable ? Number(model.memoryMb).toFixed(1) + " MiB" : "N/A"; Layout.preferredWidth: 85; color: "#a8b9d4"; font.pixelSize: 11 }
-                                Text { text: model.threadCount; Layout.preferredWidth: 63; color: "#a8b9d4"; font.pixelSize: 11 }
-                            }
+                        }
+
+                        Label {
+                            anchors.centerIn: parent
+                            visible: list.count === 0
+                            text: search.length ? "No matching processes" : "No process data available"
+                            color: "#a7bad5"
                         }
                     }
                 }
             }
+
             Rectangle {
-                Layout.preferredWidth: 270
-                Layout.fillHeight: true
-                radius: 14; color: "#152139"; border.color: "#2a3954"
+                Layout.fillWidth: root.compact
+                Layout.preferredWidth: 280
+                Layout.alignment: Qt.AlignTop
+                implicitHeight: inspector.implicitHeight + 32
+                color: "#152139"
+                radius: 12
+                border.color: "#2a3954"
+
                 ColumnLayout {
-                    anchors.fill: parent; anchors.margins: 16; spacing: 11
-                    Text { text: "PROCESS DNA"; font.pixelSize: 11; font.bold: true; font.letterSpacing: 1.1; color: "#25d8b8" }
-                    Text {
-                        text: root.selected.found ? root.selected.name : "Choose a process"
-                        color: "#f4f8ff"; font.pixelSize: 17; font.bold: true
-                        Layout.fillWidth: true; elide: Text.ElideRight
+                    id: inspector
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.margins: 16
+                    spacing: 10
+
+                    Label { text: "Process details"; color: "#6fe8d3"; font.bold: true }
+                    Label {
+                        Layout.fillWidth: true
+                        text: root.selected.found ? root.selected.name : "Select a process"
+                        textFormat: Text.PlainText
+                        font.pixelSize: 18
+                        font.bold: true
+                        wrapMode: Text.Wrap
                     }
-                    Rectangle { Layout.fillWidth: true; height: 1; color: "#31425c" }
                     Repeater {
                         model: root.selected.found ? [
                             ["PID", root.selected.pid],
@@ -114,38 +219,84 @@ Item {
                         ] : []
                         delegate: RowLayout {
                             Layout.fillWidth: true
-                            Text { text: modelData[0]; color: "#889dbb"; font.pixelSize: 12; Layout.fillWidth: true }
-                            Text { text: modelData[1]; color: "#d9e7fc"; font.pixelSize: 12 }
+                            Label { text: modelData[0]; color: "#a7bad5"; Layout.fillWidth: true }
+                            Label { text: modelData[1] }
                         }
                     }
-                    Text { text: "EXECUTABLE PATH"; visible: root.selected.found; color: "#889dbb"; font.pixelSize: 10; font.bold: true; Layout.topMargin: 12 }
-                    Text { text: root.selected.found ? root.selected.path : ""; visible: root.selected.found; color: "#c4d3e8"; font.pixelSize: 11; wrapMode: Text.WrapAnywhere; Layout.fillWidth: true }
-                    Item { Layout.fillHeight: true }
-                    Text { text: "Ending a process may cause data loss. Confirm before proceeding."; color: "#d2a477"; font.pixelSize: 11; wrapMode: Text.WordWrap; Layout.fillWidth: true }
+                    Label {
+                        visible: root.selected.found
+                        text: "Executable path"
+                        color: "#a7bad5"
+                    }
+                    Label {
+                        Layout.fillWidth: true
+                        visible: root.selected.found
+                        text: root.selected.found ? root.selected.path : ""
+                        wrapMode: Text.WrapAnywhere
+                        textFormat: Text.PlainText
+                    }
                     Button {
                         Layout.fillWidth: true
-                        enabled: root.selected.found
-                        text: "End selected process…"
-                        onClicked: endDialog.open()
+                        visible: root.selected.found
+                        enabled: root.canEnd
+                        text: "End process…"
+                        onClicked: {
+                            endDialog.pid = root.selectedPid
+                            endDialog.processName = root.selected.name
+                            endDialog.identity = root.selectedIdentity
+                            endDialog.open()
+                        }
                     }
-                    Text { text: root.actionMessage; visible: root.actionMessage.length > 0; color: "#c2d3ec"; font.pixelSize: 11; wrapMode: Text.WordWrap; Layout.fillWidth: true }
+                    Label {
+                        visible: root.selected.found && !root.canEnd
+                        Layout.fillWidth: true
+                        text: "Ending this process is unavailable."
+                        color: "#a7bad5"
+                        wrapMode: Text.WordWrap
+                    }
+                    Label {
+                        Layout.fillWidth: true
+                        visible: root.actionMessage.length > 0
+                        text: root.actionMessage
+                        wrapMode: Text.WordWrap
+                        color: "#edbc89"
+                    }
                 }
             }
         }
     }
+
     Dialog {
         id: endDialog
+        parent: Overlay.overlay
         anchors.centerIn: parent
+        width: Math.min(430, parent.width - 32)
         title: "End process?"
         modal: true
-        standardButtons: Dialog.Ok | Dialog.Cancel
-        width: 430
-        onAccepted: {
-            root.actionMessage = monitor.terminateSelectedProcess(root.selectedPid, root.selectedName)
+        focus: true
+        closePolicy: Popup.CloseOnEscape
+        property double pid: -1
+        property string processName: ""
+        property string identity: ""
+
+        contentItem: Label {
+            text: "End " + endDialog.processName + " (PID " + endDialog.pid +
+                  ")?\n\nUnsaved work may be lost."
+            wrapMode: Text.WordWrap
+            textFormat: Text.PlainText
         }
-        contentItem: Text {
-            text: "Terminate " + root.selectedName + " (PID " + root.selectedPid + ")?\n\nUnsaved work may be lost and the system may become unstable. Protected processes cannot be ended."
-            color: "#27364c"; wrapMode: Text.WordWrap; font.pixelSize: 13
+        footer: DialogButtonBox {
+            Button {
+                id: cancelButton
+                text: "Cancel"
+                DialogButtonBox.buttonRole: DialogButtonBox.RejectRole
+            }
+            Button {
+                text: "End process"
+                DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole
+            }
         }
+        onOpened: cancelButton.forceActiveFocus()
+        onAccepted: root.actionMessage = monitor.terminateSelectedProcess(pid, processName, identity)
     }
 }

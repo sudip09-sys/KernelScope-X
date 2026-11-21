@@ -3,11 +3,11 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import "../components"
 
-Item {
+PageScroll {
     id: root
     property string exportResult: ""
     ColumnLayout {
-        anchors.fill: parent; anchors.margins: 28; spacing: 16
+        width: root.availableWidth; spacing: 16
         SectionHeader {
             Layout.fillWidth: true
             heading: "Diagnostics & event timeline"
@@ -23,7 +23,7 @@ Item {
                     model: monitor.alerts
                     delegate: RowLayout {
                         Layout.fillWidth: true
-                        Rectangle { width: 8; height: 8; radius: 4; color: index === 0 && monitor.alerts[0].startsWith("No sustained") ? "#29d9b7" : "#e7af68" }
+                        Rectangle { Layout.preferredWidth: 8; Layout.preferredHeight: 8; radius: 4; color: index === 0 && monitor.alerts[0].startsWith("No sustained") ? "#29d9b7" : "#e7af68" }
                         Text { text: modelData; Layout.fillWidth: true; color: "#ebf3ff"; wrapMode: Text.WordWrap; font.pixelSize: 13 }
                     }
                 }
@@ -32,7 +32,7 @@ Item {
             }
         }
         Rectangle {
-            Layout.fillWidth: true; Layout.fillHeight: true
+            Layout.fillWidth: true; Layout.preferredHeight: 290
             radius: 15; color: "#152139"; border.color: "#2a3954"
             ColumnLayout {
                 anchors.fill: parent; anchors.margins: 18; spacing: 12
@@ -48,10 +48,10 @@ Item {
                     delegate: Rectangle {
                         width: ListView.view.width; height: 37; radius: 7
                         color: index % 2 === 0 ? "#1a2940" : "transparent"
-                        Text { anchors.fill: parent; anchors.leftMargin: 12; verticalAlignment: Text.AlignVCenter; text: modelData; color: "#bdcce5"; font.pixelSize: 11; elide: Text.ElideRight }
+                        Text { anchors.fill: parent; anchors.leftMargin: 12; verticalAlignment: Text.AlignVCenter; text: modelData; textFormat: Text.PlainText; color: "#bdcce5"; font.pixelSize: 11; elide: Text.ElideRight }
                     }
                 }
-                Text { visible: monitor.events.length === 0; text: "Events appear as processes start or exit while monitoring is active."; font.pixelSize: 12; color: "#8fa1bc" }
+                Text { visible: monitor.events.length === 0; text: "Events appear as processes start or exit while monitoring is active."; font.pixelSize: 12; color: "#8fa1bc"; Layout.fillWidth: true; wrapMode: Text.WordWrap }
             }
         }
         RowLayout {

@@ -12,18 +12,21 @@ int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
     QGuiApplication::setApplicationName("KernelScope X");
     QGuiApplication::setOrganizationName("KernelScope X");
-    QGuiApplication::setApplicationVersion("0.1.0");
-    QQuickStyle::setStyle("Basic");
+    QGuiApplication::setApplicationVersion("0.2.0");
+    QQuickStyle::setStyle("Fusion");
 
     ProcessModel processModel;
     ProcessFilterModel processProxy;
     processProxy.setSourceModel(&processModel);
+    ProcessFilterModel overviewProxy;
+    overviewProxy.setSourceModel(&processModel);
     MonitorController monitor(&processModel);
     SchedulingSimulator scheduler;
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("processModel", &processModel);
     engine.rootContext()->setContextProperty("processProxy", &processProxy);
+    engine.rootContext()->setContextProperty("overviewProxy", &overviewProxy);
     engine.rootContext()->setContextProperty("monitor", &monitor);
     engine.rootContext()->setContextProperty("scheduler", &scheduler);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(KernelScopeX VERSION 0.1.0 LANGUAGES CXX)
+project(KernelScopeX VERSION 0.2.0 LANGUAGES CXX)
 
 if(NOT WIN32)
     message(FATAL_ERROR "KernelScope X Phase 1 targets native Windows. Build with MSVC on Windows, not in WSL.")
@@ -36,7 +36,7 @@ set_target_properties(KernelScopeX PROPERTIES
 
 # Resource aliases make files loadable as qrc:/qt/qml/KernelScopeX/Main.qml
 set_source_files_properties(app/qml/Main.qml PROPERTIES QT_RESOURCE_ALIAS "Main.qml")
-foreach(component MetricCard SidebarButton SectionHeader)
+foreach(component MetricCard SidebarButton SectionHeader PageScroll)
     set_source_files_properties(app/qml/components/${component}.qml
         PROPERTIES QT_RESOURCE_ALIAS "components/${component}.qml")
 endforeach()
@@ -53,6 +53,7 @@ qt_add_qml_module(KernelScopeX
         app/qml/components/MetricCard.qml
         app/qml/components/SidebarButton.qml
         app/qml/components/SectionHeader.qml
+        app/qml/components/PageScroll.qml
         app/qml/pages/OverviewPage.qml
         app/qml/pages/ProcessesPage.qml
         app/qml/pages/DiagnosticsPage.qml
@@ -83,4 +84,15 @@ if(BUILD_TESTING)
     target_include_directories(KernelScopeTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
     target_link_libraries(KernelScopeTests PRIVATE Qt6::Core Qt6::Test)
     add_test(NAME SchedulingAlgorithms COMMAND KernelScopeTests)
+
+    qt_add_executable(KernelScopeProcessTests
+        tests/tst_processmodel.cpp
+        src/models/ProcessModel.h
+        src/models/ProcessModel.cpp
+        src/models/ProcessFilterModel.h
+        src/models/ProcessFilterModel.cpp
+    )
+    target_include_directories(KernelScopeProcessTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+    target_link_libraries(KernelScopeProcessTests PRIVATE Qt6::Core Qt6::Test)
+    add_test(NAME ProcessModels COMMAND KernelScopeProcessTests)
 endif()
