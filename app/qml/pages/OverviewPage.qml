@@ -3,21 +3,21 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import "../components"
 
-Item {
+PageScroll {
     id: root
-    anchors.margins: 0
     ColumnLayout {
-        anchors.fill: parent
-        anchors.margins: 28
+        width: root.availableWidth
         spacing: 18
         SectionHeader {
             Layout.fillWidth: true
             heading: "Your system at a glance"
             subheading: "Real Windows metrics · Collected locally every 1.5 seconds · CPU percentage is total-machine normalized"
         }
-        RowLayout {
+        GridLayout {
             Layout.fillWidth: true
-            spacing: 12
+            columns: width < 760 ? 2 : 4
+            columnSpacing: 12
+            rowSpacing: 12
             MetricCard {
                 Layout.fillWidth: true
                 caption: "CPU UTILIZATION"
@@ -62,6 +62,8 @@ Item {
                     id: graph
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    onWidthChanged: requestPaint()
+                    onHeightChanged: requestPaint()
                     onPaint: {
                         const ctx = getContext("2d")
                         ctx.clearRect(0, 0, width, height)
@@ -92,7 +94,7 @@ Item {
             }
         }
         Rectangle {
-            Layout.fillWidth: true; Layout.fillHeight: true
+            Layout.fillWidth: true; Layout.preferredHeight: 250
             radius: 16; color: "#152139"; border.color: "#2a3954"
             ColumnLayout {
                 anchors.fill: parent; anchors.margins: 20; spacing: 12
@@ -103,14 +105,15 @@ Item {
                 }
                 ListView {
                     Layout.fillWidth: true; Layout.fillHeight: true
-                    clip: true; model: processProxy; interactive: true
+                    clip: true; model: overviewProxy
+                    ScrollBar.vertical: ScrollBar {}
                     delegate: Rectangle {
                         width: ListView.view.width; height: 36
                         color: index % 2 === 0 ? "#19273d" : "transparent"
                         radius: 7
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 13; anchors.rightMargin: 13
-                            Text { text: model.name; color: "#dce6f7"; Layout.fillWidth: true; elide: Text.ElideRight; font.pixelSize: 12 }
+                            Text { text: model.name; textFormat: Text.PlainText; color: "#dce6f7"; Layout.fillWidth: true; elide: Text.ElideRight; font.pixelSize: 12 }
                             Text { text: "PID " + model.pid; color: "#96a9c7"; Layout.preferredWidth: 100; font.pixelSize: 11 }
                             Text { text: Number(model.cpu).toFixed(1) + "% CPU"; color: "#2ddbbb"; Layout.preferredWidth: 90; font.pixelSize: 11 }
                             Text { text: model.memoryAvailable ? Number(model.memoryMb).toFixed(1) + " MiB" : "N/A"; color: "#a7b5cc"; Layout.preferredWidth: 95; horizontalAlignment: Text.AlignRight; font.pixelSize: 11 }
@@ -121,6 +124,7 @@ Item {
         }
         Text {
             visible: monitor.error.length > 0
+            Layout.fillWidth: true; wrapMode: Text.Wrap
             text: monitor.error; color: "#efb36b"; font.pixelSize: 12
         }
     }

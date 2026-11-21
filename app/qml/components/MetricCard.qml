@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 
 Rectangle {
@@ -20,7 +19,7 @@ Rectangle {
         spacing: 8
         RowLayout {
             Layout.fillWidth: true
-            Rectangle { width: 8; height: 8; radius: 4; color: root.accent }
+            Rectangle { Layout.preferredWidth: 8; Layout.preferredHeight: 8; radius: 4; color: root.accent }
             Text {
                 text: root.caption
                 color: "#9baac5"; font.pixelSize: 11; font.weight: Font.DemiBold

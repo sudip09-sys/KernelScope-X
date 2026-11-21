@@ -42,7 +42,10 @@ void MonitorController::setPaused(bool value) {
     if (!paused_) refresh();
 }
 void MonitorController::refresh() {
-    if (pending_ || paused_) return;
+    if (!paused_) refreshOnce();
+}
+void MonitorController::refreshOnce() {
+    if (pending_) return;
     pending_ = true;
     emit requestCollection();
 }
@@ -77,7 +80,7 @@ void MonitorController::onSnapshot(const SystemSnapshot &snapshot) {
                 events_.prepend(QStringLiteral("%1  EXIT   PID %2").arg(stamp).arg(pid));
         }
         while (events_.size() > 60) events_.removeLast();
-        emit eventsChanged();
+        if (added || removed) emit eventsChanged();
     }
     previousPids_ = std::move(current);
     hasPriorSnapshot_ = true;
@@ -111,19 +114,20 @@ QString MonitorController::exportSnapshot() {
     file.close();
     return QStringLiteral("Saved: %1").arg(filename);
 }
-QString MonitorController::terminateSelectedProcess(qint64 pid, const QString &expectedName) {
-    if (pid <= 4 || pid > 0xFFFFFFFFLL || pid == qint64(GetCurrentProcessId()))
-        return QStringLiteral("Blocked: cannot end this process.");
-    const QVariantMap info = model_->details(pid);
-    if (!info.value("found").toBool() ||
-        info.value("name").toString().compare(expectedName, Qt::CaseInsensitive) != 0)
-        return QStringLiteral("Process changed or disappeared; refresh selection.");
-    const QString name = expectedName.toLower();
+bool MonitorController::canTerminate(qint64 pid, const QString &name, const QString &identity) const {
     static const QStringList protectedNames = {
         "system", "registry", "smss.exe", "csrss.exe", "wininit.exe",
         "winlogon.exe", "services.exe", "lsass.exe", "svchost.exe"
     };
-    if (protectedNames.contains(name)) return QStringLiteral("Blocked: protected core Windows process.");
+    return pid > 4 && pid <= 0xFFFFFFFFLL && pid != qint64(GetCurrentProcessId()) &&
+           !protectedNames.contains(name, Qt::CaseInsensitive) &&
+           model_->matchesIdentity(pid, identity) &&
+           model_->details(pid).value("name").toString().compare(name, Qt::CaseInsensitive) == 0;
+}
+QString MonitorController::terminateSelectedProcess(qint64 pid, const QString &expectedName,
+                                                    const QString &expectedIdentity) {
+    if (!canTerminate(pid, expectedName, expectedIdentity))
+        return QStringLiteral("Process identity changed or the action is unavailable.");
     HANDLE h = OpenProcess(PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, DWORD(pid));
     if (!h) return QStringLiteral("Access denied or process no longer exists (error %1).").arg(GetLastError());
 
@@ -139,7 +143,7 @@ QString MonitorController::terminateSelectedProcess(qint64 pid, const QString &e
     // PID reuse guard: require the creation timestamp from the last snapshot
     // to match the currently opened process (not just an executable name).
     FILETIME created{}, exited{}, kernelTime{}, userTime{};
-    const quint64 expectedCreation = info.value("creationTicks").toULongLong();
+    const quint64 expectedCreation = expectedIdentity.toULongLong();
     if (expectedCreation == 0 ||
         !GetProcessTimes(h, &created, &exited, &kernelTime, &userTime)) {
         CloseHandle(h);
