@@ -11,7 +11,8 @@ PageScroll {
     property string actionMessage: ""
     readonly property bool canEnd: selected.found &&
                                    monitor.canTerminate(selectedPid, selected.name, selectedIdentity)
-    readonly property bool compact: availableWidth < 830
+    readonly property bool compact: availableWidth < 790
+    readonly property bool hierarchy: processProxy.sortMode === 4
 
     function selectProcess(pid, identity) {
         selectedPid = pid
@@ -58,9 +59,9 @@ PageScroll {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignTop
                 Layout.preferredHeight: root.compact ? 370 : Math.max(370, root.height - 110)
-                color: "#1b211c"
-                radius: 10
-                border.color: "#313a32"
+                color: "#20242b"
+                radius: 6
+                border.color: "#343c48"
 
                 ColumnLayout {
                     anchors.fill: parent
@@ -71,14 +72,14 @@ PageScroll {
                         Layout.fillWidth: true
                         Label {
                             Layout.fillWidth: true
-                            text: "Running processes"
+                            text: root.hierarchy ? "Process hierarchy" : "Running processes"
                             font.pixelSize: 19
                             font.weight: Font.DemiBold
                         }
                         Label {
                             text: list.count + " / " + monitor.processes
                             font.family: "Consolas"
-                            color: "#b9c4b9"
+                            color: "#bcc7d5"
                         }
                     }
                     RowLayout {
@@ -88,7 +89,7 @@ PageScroll {
                         TextField {
                             id: search
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 38
+                            Layout.preferredHeight: 32
                             Accessible.name: "Search processes"
                             placeholderText: "Name, PID or parent PID"
                             selectByMouse: true
@@ -105,17 +106,17 @@ PageScroll {
                             }
                         }
                         ComboBox {
-                            Layout.preferredWidth: 138
+                            Layout.preferredWidth: 154
                             Layout.preferredHeight: 38
                             Accessible.name: "Process sort order"
-                            model: ["CPU: highest", "Memory: highest", "Name: A–Z", "PID: ascending"]
+                            model: ["CPU: highest", "Memory: highest", "Name: A–Z", "PID: ascending", "Parent / child"]
                             onActivated: processProxy.setSortMode(currentIndex)
                         }
                     }
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 34
-                        color: "#28332a"
+                        color: "#2a313d"
                         radius: 6
 
                         RowLayout {
@@ -149,6 +150,7 @@ PageScroll {
                                 required property double pid
                                 required property string identity
                                 required property string name
+                                required property int treeDepth
                                 required property real cpu
                                 required property var memoryMb
                                 required property bool memoryAvailable
@@ -156,13 +158,13 @@ PageScroll {
                                 readonly property bool selectedRow: root.selectedPid === pid &&
                                                                     root.selectedIdentity === identity
                                 width: list.width - 6
-                                height: 41
+                                height: 33
                                 Accessible.name: name + ", PID " + pid
                                 onClicked: root.selectProcess(pid, identity)
                                 background: Rectangle {
                                     radius: 6
-                                    color: row.selectedRow ? "#354629" : row.hovered ? "#29352a" : "transparent"
-                                    border.color: row.visualFocus ? "#c7f46a" : "transparent"
+                                    color: row.selectedRow ? "#273d55" : row.hovered ? "#292f39" : "transparent"
+                                    border.color: row.visualFocus ? "#7abafb" : "transparent"
                                     Rectangle {
                                         width: 3
                                         radius: 1
@@ -171,22 +173,29 @@ PageScroll {
                                         anchors.bottom: parent.bottom
                                         anchors.topMargin: 6
                                         anchors.bottomMargin: 6
-                                        color: "#c7f46a"
+                                        color: "#7abafb"
                                         visible: row.selectedRow
                                     }
                                     Rectangle {
                                         anchors.bottom: parent.bottom
                                         width: parent.width
                                         height: 1
-                                        color: "#313a32"
+                                        color: "#343c48"
                                         visible: !row.selectedRow && !row.visualFocus
                                     }
                                 }
                                 contentItem: RowLayout {
                                     spacing: 8
-                                    Label { text: row.name; textFormat: Text.PlainText; Layout.fillWidth: true; elide: Text.ElideRight; font.weight: row.selectedRow ? Font.DemiBold : Font.Normal }
-                                    Label { text: row.pid; font.family: "Consolas"; Layout.preferredWidth: 61; color: "#a3afa3" }
-                                    Label { text: row.cpu.toFixed(1) + "%"; font.family: "Consolas"; Layout.preferredWidth: 59; color: "#c7f46a" }
+                                    Label {
+                                        Layout.fillWidth: true
+                                        Layout.leftMargin: root.hierarchy ? Math.min(row.treeDepth, 8) * 11 : 0
+                                        text: root.hierarchy && row.treeDepth > 0 ? "↳  " + row.name : row.name
+                                        textFormat: Text.PlainText
+                                        elide: Text.ElideRight
+                                        font.weight: row.selectedRow ? Font.DemiBold : Font.Normal
+                                    }
+                                    Label { text: row.pid; font.family: "Consolas"; Layout.preferredWidth: 61; color: "#a4afbe" }
+                                    Label { text: row.cpu.toFixed(1) + "%"; font.family: "Consolas"; Layout.preferredWidth: 59; color: "#7abafb" }
                                     Label {
                                         Layout.preferredWidth: 92
                                         font.family: "Consolas"
@@ -203,7 +212,7 @@ PageScroll {
                             anchors.centerIn: parent
                             visible: list.count === 0
                             text: search.length ? "No matching processes" : "No process data available"
-                            color: "#b9c4b9"
+                            color: "#bcc7d5"
                         }
                     }
                 }
@@ -215,9 +224,9 @@ PageScroll {
                 Layout.fillHeight: !root.compact
                 Layout.alignment: Qt.AlignTop
                 implicitHeight: Math.max(178, inspector.implicitHeight + 36)
-                color: "#1b211c"
+                color: "#20242b"
                 radius: 10
-                border.color: "#313a32"
+                border.color: "#343c48"
 
                 ColumnLayout {
                     id: inspector
@@ -227,7 +236,7 @@ PageScroll {
                     anchors.margins: 18
                     spacing: 11
 
-                    Label { text: "Process details"; color: "#c7f46a"; font.weight: Font.DemiBold }
+                    Label { text: "Process details"; color: "#7abafb"; font.weight: Font.DemiBold }
                     Label {
                         Layout.fillWidth: true
                         text: root.selected.found ? root.selected.name : "Select a process"
@@ -240,14 +249,14 @@ PageScroll {
                         visible: !root.selected.found
                         Layout.fillWidth: true
                         text: "Choose a row to see CPU, memory and executable details."
-                        color: "#b9c4b9"
+                        color: "#bcc7d5"
                         wrapMode: Text.WordWrap
                     }
                     Rectangle {
                         visible: root.selected.found
                         Layout.fillWidth: true
                         Layout.preferredHeight: 1
-                        color: "#313a32"
+                        color: "#343c48"
                     }
                     Repeater {
                         model: root.selected.found ? [
@@ -259,14 +268,14 @@ PageScroll {
                         ] : []
                         delegate: RowLayout {
                             Layout.fillWidth: true
-                            Label { text: modelData[0]; color: "#b9c4b9"; Layout.fillWidth: true }
+                            Label { text: modelData[0]; color: "#bcc7d5"; Layout.fillWidth: true }
                             Label { text: modelData[1] }
                         }
                     }
                     Label {
                         visible: root.selected.found
                         text: "Executable path"
-                        color: "#b9c4b9"
+                        color: "#bcc7d5"
                     }
                     Label {
                         Layout.fillWidth: true
@@ -291,7 +300,7 @@ PageScroll {
                         visible: root.selected.found && !root.canEnd
                         Layout.fillWidth: true
                         text: "Ending this process is unavailable."
-                        color: "#b9c4b9"
+                        color: "#bcc7d5"
                         wrapMode: Text.WordWrap
                     }
                     Label {
@@ -299,7 +308,7 @@ PageScroll {
                         visible: root.actionMessage.length > 0
                         text: root.actionMessage
                         wrapMode: Text.WordWrap
-                        color: "#f1bf74"
+                        color: "#eab476"
                     }
                 }
             }

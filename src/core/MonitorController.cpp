@@ -53,8 +53,12 @@ void MonitorController::onSnapshot(const SystemSnapshot &snapshot) {
     pending_ = false;
     snapshot_ = snapshot;
     model_->setProcesses(snapshot.processes);
-    if (history_.size() == 60) history_.removeFirst();
-    history_.append(snapshot.cpuPercent);
+    if (cpuHistory_.size() == 60) {
+        cpuHistory_.removeFirst();
+        memoryHistory_.removeFirst();
+    }
+    cpuHistory_.append(snapshot.cpuPercent);
+    memoryHistory_.append(snapshot.memoryTotalBytes ? QVariant(snapshot.memoryPercent) : QVariant{});
     highCpuSamples_ = snapshot.cpuPercent >= 85 ? highCpuSamples_ + 1 : 0;
     highMemorySamples_ = snapshot.memoryPercent >= 90 ? highMemorySamples_ + 1 : 0;
     QStringList newAlerts;

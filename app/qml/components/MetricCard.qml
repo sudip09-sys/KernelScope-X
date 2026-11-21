@@ -6,13 +6,13 @@ Rectangle {
     property string caption: ""
     property string value: ""
     property string subtitle: ""
-    property color accent: "#c7f46a"
+    property color accent: "#7abafb"
     property real ratio: -1
 
-    implicitHeight: 126
-    radius: 10
-    color: "#1b211c"
-    border.color: "#313a32"
+    implicitHeight: 99
+    radius: 6
+    color: "#20242b"
+    border.color: "#343c48"
 
     ColumnLayout {
         anchors.fill: parent
@@ -21,7 +21,7 @@ Rectangle {
 
         Text {
             text: card.caption
-            color: "#b9c4b9"
+            color: "#bcc7d5"
             font.pixelSize: 12
             font.weight: Font.DemiBold
             Layout.fillWidth: true
@@ -31,12 +31,12 @@ Rectangle {
             text: card.value
             color: card.accent
             font.family: "Consolas"
-            font.pixelSize: 30
+            font.pixelSize: 25
             font.weight: Font.DemiBold
         }
         Text {
             text: card.subtitle
-            color: "#a3afa3"
+            color: "#a4afbe"
             font.pixelSize: 12
             Layout.fillWidth: true
             elide: Text.ElideRight
@@ -47,7 +47,7 @@ Rectangle {
             visible: card.ratio >= 0
             Layout.fillWidth: true
             Layout.preferredHeight: 4
-            color: "#303b30"
+            color: "#323b48"
             radius: 2
 
             Rectangle {

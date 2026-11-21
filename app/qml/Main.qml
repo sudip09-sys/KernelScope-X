@@ -13,152 +13,142 @@ ApplicationWindow {
     minimumHeight: 540
     visible: true
     title: "KernelScope X " + Qt.application.version
-    color: "#121613"
+    color: "#15181d"
     font.family: "Segoe UI"
     font.pixelSize: 13
 
     property int pageIndex: 0
-    palette.window: "#1b211c"
-    palette.windowText: "#eff3eb"
-    palette.base: "#141815"
-    palette.alternateBase: "#222a23"
-    palette.text: "#eff3eb"
-    palette.button: "#252d26"
-    palette.buttonText: "#eff3eb"
-    palette.placeholderText: "#a3afa3"
-    palette.highlight: "#3b5426"
+    readonly property bool narrow: width < 900
+    palette.window: "#20242b"
+    palette.windowText: "#eef1f5"
+    palette.base: "#171a20"
+    palette.alternateBase: "#232831"
+    palette.text: "#eef1f5"
+    palette.button: "#282e38"
+    palette.buttonText: "#eef1f5"
+    palette.placeholderText: "#a4afbe"
+    palette.highlight: "#234d75"
     palette.highlightedText: "#ffffff"
-    palette.mid: "#39443a"
-    palette.dark: "#141815"
-    palette.light: "#566356"
-    palette.disabled.text: "#8a988a"
-    palette.disabled.buttonText: "#8a988a"
+    palette.mid: "#363e4b"
+    palette.dark: "#171a20"
+    palette.light: "#4e596b"
+    palette.disabled.text: "#929daa"
+    palette.disabled.buttonText: "#929daa"
 
     header: Rectangle {
-        implicitHeight: 110
-        color: "#1b211c"
+        implicitHeight: 52
+        color: "#20242b"
 
-        ColumnLayout {
+        RowLayout {
             anchors.fill: parent
-            spacing: 0
-
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 63
-                Layout.leftMargin: 28
-                Layout.rightMargin: 28
-                spacing: 12
-
-                Rectangle {
-                    Layout.preferredWidth: 34
-                    Layout.preferredHeight: 34
-                    radius: 8
-                    color: "#c7f46a"
-                    Canvas {
-                        anchors.fill: parent
-                        onPaint: {
-                            const ctx = getContext("2d")
-                            ctx.clearRect(0, 0, width, height)
-                            ctx.strokeStyle = "#202b16"
-                            ctx.lineWidth = 2
-                            ctx.lineCap = "round"
-                            ctx.lineJoin = "round"
-                            ctx.beginPath()
-                            ctx.moveTo(6, 19)
-                            ctx.lineTo(12, 19)
-                            ctx.lineTo(15, 10)
-                            ctx.lineTo(20, 24)
-                            ctx.lineTo(23, 16)
-                            ctx.lineTo(28, 16)
-                            ctx.stroke()
-                        }
-                    }
-                }
-                Text {
-                    text: "KernelScope X"
-                    color: "#eff3eb"
-                    font.pixelSize: 21
-                    font.weight: Font.DemiBold
-                }
-                Text {
-                    text: "v" + Qt.application.version
-                    color: "#a3afa3"
-                    font.family: "Consolas"
-                    font.pixelSize: 12
-                }
-                Item { Layout.fillWidth: true }
-                Rectangle {
-                    Layout.preferredWidth: 7
-                    Layout.preferredHeight: 7
-                    radius: 4
-                    color: monitor.paused ? "#f1bf74" : "#c7f46a"
-                }
-                Text {
-                    text: monitor.paused ? "Paused" : monitor.updated ? "Live" : "Starting"
-                    color: "#eff3eb"
-                    font.weight: Font.DemiBold
-                }
-                Text {
-                    visible: monitor.updated.length > 0
-                    text: "Updated " + monitor.updated
-                    color: "#a3afa3"
-                    font.family: "Consolas"
-                    font.pixelSize: 12
-                }
-                Button {
-                    text: monitor.paused ? "Resume" : "Pause"
-                    implicitHeight: 33
-                    onClicked: monitor.paused = !monitor.paused
-                }
-                Button {
-                    text: "Refresh"
-                    implicitHeight: 33
-                    highlighted: true
-                    onClicked: monitor.refreshOnce()
-                }
-            }
+            anchors.leftMargin: 16
+            anchors.rightMargin: 16
+            spacing: 11
 
             Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-                color: "#313a32"
+                Layout.preferredWidth: 28
+                Layout.preferredHeight: 28
+                radius: 6
+                color: "#265078"
+                Label {
+                    anchors.centerIn: parent
+                    text: "KX"
+                    color: "#d6eaff"
+                    font.weight: Font.Bold
+                    font.pixelSize: 12
+                }
             }
+            Label {
+                text: "KernelScope X"
+                font.pixelSize: 16
+                font.weight: Font.DemiBold
+            }
+            Label {
+                text: "v" + Qt.application.version
+                color: "#a4afbe"
+                font.family: "Consolas"
+                font.pixelSize: 11
+            }
+            Item { Layout.fillWidth: true }
+            Rectangle {
+                Layout.preferredWidth: 7
+                Layout.preferredHeight: 7
+                radius: 4
+                color: monitor.paused ? "#eab476" : "#79d5b1"
+            }
+            Label { text: monitor.paused ? "Paused" : monitor.updated ? "Live" : "Starting" }
+            Label {
+                visible: monitor.updated.length > 0
+                text: "Updated " + monitor.updated
+                color: "#a4afbe"
+                font.family: "Consolas"
+                font.pixelSize: 12
+            }
+            Button {
+                text: monitor.paused ? "Resume" : "Pause"
+                Layout.preferredHeight: 30
+                onClicked: monitor.paused = !monitor.paused
+            }
+            Button {
+                text: "Refresh"
+                Layout.preferredHeight: 30
+                highlighted: true
+                onClicked: monitor.refreshOnce()
+            }
+        }
 
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.leftMargin: 22
-                Layout.rightMargin: 22
-                spacing: 9
+        Rectangle {
+            anchors.bottom: parent.bottom
+            width: parent.width
+            height: 1
+            color: "#333a46"
+        }
+    }
+
+    RowLayout {
+        anchors.fill: parent
+        spacing: 0
+
+        Rectangle {
+            Layout.preferredWidth: window.narrow ? 130 : 158
+            Layout.fillHeight: true
+            color: "#1b1f26"
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 8
+                spacing: 4
 
                 Repeater {
-                    model: ["Overview", "Processes", "Diagnostics", "OS Laboratory"]
+                    model: ["Performance", "Processes", "Diagnostics", "OS Laboratory"]
                     NavigationTab {
                         required property int index
                         required property string modelData
-                        Layout.fillHeight: true
+                        Layout.fillWidth: true
                         text: modelData
                         active: window.pageIndex === index
                         onClicked: window.pageIndex = index
                     }
                 }
-                Item { Layout.fillWidth: true }
+                Item { Layout.fillHeight: true }
             }
 
             Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-                color: "#313a32"
+                anchors.right: parent.right
+                height: parent.height
+                width: 1
+                color: "#333a46"
             }
         }
-    }
 
-    StackLayout {
-        anchors.fill: parent
-        currentIndex: window.pageIndex
-        OverviewPage { onOpenProcesses: window.pageIndex = 1 }
-        ProcessesPage {}
-        DiagnosticsPage {}
-        OsLabPage {}
+        StackLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            currentIndex: window.pageIndex
+            OverviewPage { onOpenProcesses: window.pageIndex = 1 }
+            ProcessesPage {}
+            DiagnosticsPage {}
+            OsLabPage {}
+        }
     }
 }

@@ -7,9 +7,9 @@ ScrollView {
     contentWidth: availableWidth
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
-    leftPadding: width < 780 ? 16 : 26
+    leftPadding: width < 780 ? 12 : 17
     rightPadding: leftPadding + 8
-    topPadding: 22
-    bottomPadding: 24
+    topPadding: 15
+    bottomPadding: 18
     Accessible.name: "Page content"
 }

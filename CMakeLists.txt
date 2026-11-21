@@ -36,7 +36,7 @@ set_target_properties(KernelScopeX PROPERTIES
 
 # Resource aliases make files loadable as qrc:/qt/qml/KernelScopeX/Main.qml
 set_source_files_properties(app/qml/Main.qml PROPERTIES QT_RESOURCE_ALIAS "Main.qml")
-foreach(component MetricCard NavigationTab SectionHeader PageScroll)
+foreach(component MetricCard NavigationTab SectionHeader PageScroll HistoryPlot)
     set_source_files_properties(app/qml/components/${component}.qml
         PROPERTIES QT_RESOURCE_ALIAS "components/${component}.qml")
 endforeach()
@@ -54,6 +54,7 @@ qt_add_qml_module(KernelScopeX
         app/qml/components/NavigationTab.qml
         app/qml/components/SectionHeader.qml
         app/qml/components/PageScroll.qml
+        app/qml/components/HistoryPlot.qml
         app/qml/pages/OverviewPage.qml
         app/qml/pages/ProcessesPage.qml
         app/qml/pages/DiagnosticsPage.qml

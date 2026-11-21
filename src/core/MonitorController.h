@@ -20,6 +20,7 @@ class MonitorController final : public QObject {
     Q_PROPERTY(int threads READ threads NOTIFY statsChanged)
     Q_PROPERTY(QString updated READ updated NOTIFY statsChanged)
     Q_PROPERTY(QVariantList cpuHistory READ cpuHistory NOTIFY statsChanged)
+    Q_PROPERTY(QVariantList memoryHistory READ memoryHistory NOTIFY statsChanged)
     Q_PROPERTY(QStringList alerts READ alerts NOTIFY alertsChanged)
     Q_PROPERTY(QStringList events READ events NOTIFY eventsChanged)
     Q_PROPERTY(bool paused READ paused WRITE setPaused NOTIFY pausedChanged)
@@ -35,7 +36,8 @@ public:
     int processes() const { return int(snapshot_.processCount); }
     int threads() const { return int(snapshot_.threadCount); }
     QString updated() const { return snapshot_.sampledAt.toString("hh:mm:ss"); }
-    QVariantList cpuHistory() const { return history_; }
+    QVariantList cpuHistory() const { return cpuHistory_; }
+    QVariantList memoryHistory() const { return memoryHistory_; }
     QStringList alerts() const { return alerts_; }
     QStringList events() const { return events_; }
     bool paused() const { return paused_; }
@@ -65,7 +67,8 @@ private:
     bool paused_ = false;
     int highCpuSamples_ = 0;
     int highMemorySamples_ = 0;
-    QVariantList history_;
+    QVariantList cpuHistory_;
+    QVariantList memoryHistory_;
     QStringList alerts_;
     QStringList events_;
     QSet<quint32> previousPids_;

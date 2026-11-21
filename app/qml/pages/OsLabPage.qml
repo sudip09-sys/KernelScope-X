@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -5,124 +6,492 @@ import "../components"
 
 PageScroll {
     id: root
+    property string algorithm: "FCFS"
     property var result: ({})
-    property var segmentColors: ["#29d9ba", "#7e87ed", "#e4a66c", "#4faada", "#db80bb", "#8abf7d"]
+    property bool outdated: false
+    property int zoom: 1
+    readonly property bool hasResult: (result.totalTime || 0) > 0
+    readonly property var resultRows: result.rows || []
+    readonly property var segmentColors: ["#7abafb", "#77d8be", "#efb971", "#c5a2f5", "#ef99a7", "#beda83"]
+
+    ListModel {
+        id: jobs
+        ListElement { jobName: "P1"; arrival: 0; burst: 8 }
+        ListElement { jobName: "P2"; arrival: 1; burst: 4 }
+        ListElement { jobName: "P3"; arrival: 2; burst: 9 }
+        ListElement { jobName: "P4"; arrival: 3; burst: 5 }
+    }
+
+    function csv() {
+        const lines = []
+        for (let i = 0; i < jobs.count; ++i) {
+            const job = jobs.get(i)
+            lines.push([job.jobName, job.arrival, job.burst].join(","))
+        }
+        return lines.join("\n")
+    }
+
+    function run() {
+        result = scheduler.simulate(csv(), algorithm, quantum.value)
+        outdated = false
+        zoom = 1
+        timeline.contentX = 0
+    }
+
+    function loadCsv() {
+        const parsed = scheduler.simulate(csvInput.text, algorithm, quantum.value)
+        if (parsed.error) {
+            csvDialog.errorMessage = parsed.error
+            return
+        }
+        jobs.clear()
+        for (const job of parsed.rows)
+            jobs.append({ jobName: job.name, arrival: job.arrival, burst: job.burst })
+        outdated = true
+        csvDialog.close()
+    }
+
+    function colorFor(index) {
+        return segmentColors[index % segmentColors.length]
+    }
+
+    Component.onCompleted: run()
+
     ColumnLayout {
-        width: root.availableWidth; spacing: 13
+        width: root.availableWidth
+        spacing: 11
+
         SectionHeader {
             Layout.fillWidth: true
-            heading: "CPU Scheduling Laboratory"
-            subheading: "Compare CPU scheduling algorithms on simulated workloads."
+            heading: "CPU scheduling lab"
+            subheading: "Build a simulated workload and inspect its execution timeline"
         }
+
         GridLayout {
             Layout.fillWidth: true
-            columns: width < 750 ? 1 : 2
-            columnSpacing: 14
-            rowSpacing: 14
+            columns: width < 755 ? 1 : 2
+            columnSpacing: 10
+            rowSpacing: 10
+
             Rectangle {
-                Layout.preferredWidth: 310; Layout.fillWidth: true; Layout.preferredHeight: 210
-                radius: 13; color: "#1b211c"; border.color: "#313a32"
+                Layout.fillWidth: parent.columns === 1
+                Layout.preferredWidth: 205
+                Layout.preferredHeight: algorithms.implicitHeight + 24
+                Layout.alignment: Qt.AlignTop
+                radius: 6
+                color: "#20242b"
+                border.color: "#343c48"
+
                 ColumnLayout {
-                    anchors.fill: parent; anchors.margins: 14; spacing: 8
-                    Text { text: "PROCESS DATA (name, arrival, burst)"; color: "#b9c4b9"; font.pixelSize: 11; font.bold: true }
-                    ScrollView {
+                    id: algorithms
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.margins: 12
+                    spacing: 6
+
+                    Label { text: "Algorithm"; font.pixelSize: 16; font.weight: Font.DemiBold }
+                    Repeater {
+                        model: [
+                            { code: "FCFS", name: "First Come, First Served" },
+                            { code: "SJF", name: "Shortest Job First" },
+                            { code: "RR", name: "Round Robin" }
+                        ]
+                        delegate: ItemDelegate {
+                            required property var modelData
+                            Layout.fillWidth: true
+                            implicitHeight: 34
+                            text: modelData.name
+                            highlighted: root.algorithm === modelData.code
+                            onClicked: {
+                                if (root.algorithm !== modelData.code) {
+                                    root.algorithm = modelData.code
+                                    root.outdated = true
+                                }
+                            }
+                        }
+                    }
+
+                    RowLayout {
+                        visible: root.algorithm === "RR"
+                        Layout.fillWidth: true
+                        Label { text: "Quantum"; Layout.fillWidth: true }
+                        SpinBox {
+                            id: quantum
+                            from: 1
+                            to: 1000
+                            value: 3
+                            Accessible.name: "Round Robin quantum"
+                            onValueModified: root.outdated = true
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 262
+                radius: 6
+                color: "#20242b"
+                border.color: "#343c48"
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 12
+                    spacing: 7
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Label {
+                            Layout.fillWidth: true
+                            text: "Workload"
+                            font.pixelSize: 16
+                            font.weight: Font.DemiBold
+                        }
+                        Button {
+                            text: "Edit CSV"
+                            onClicked: {
+                                csvInput.text = root.csv()
+                                csvDialog.errorMessage = ""
+                                csvDialog.open()
+                            }
+                        }
+                        Button {
+                            text: "Add process"
+                            enabled: jobs.count < 24
+                            onClicked: {
+                                jobs.append({ jobName: "", arrival: 0, burst: 1 })
+                                root.outdated = true
+                                workload.positionViewAtEnd()
+                            }
+                        }
+                    }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.rightMargin: 9
+                        spacing: 8
+                        Label { text: "Process"; Layout.fillWidth: true; color: "#a4afbe" }
+                        Label { text: "Arrival"; Layout.preferredWidth: 108; color: "#a4afbe" }
+                        Label { text: "Burst"; Layout.preferredWidth: 108; color: "#a4afbe" }
+                        Item { Layout.preferredWidth: 32 }
+                    }
+                    ListView {
+                        id: workload
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        model: jobs
                         clip: true
-                        TextArea {
-                            id: input
-                            text: "P1,0,8\nP2,1,4\nP3,2,9\nP4,3,5"
-                            font.family: "Consolas"
-                            selectByMouse: true
-                            wrapMode: TextEdit.Wrap
-                        }
-                    }
-                }
-            }
-            ColumnLayout {
-                Layout.fillWidth: true; spacing: 12
-                RowLayout {
-                    Text { text: "Algorithm"; color: "#b9c4b9"; font.pixelSize: 12 }
-                    ComboBox { id: algorithm; Layout.preferredWidth: 110; model: ["FCFS", "SJF", "RR"] }
-                    Text { text: "Quantum"; color: "#b9c4b9"; font.pixelSize: 12 }
-                    SpinBox { id: quantum; from: 1; to: 1000; value: 3; enabled: algorithm.currentText === "RR" }
-                }
-                Text { text: "FCFS and SJF are non-preemptive; RR uses time slicing. All calculations include arrival times."; color: "#b9c4b9"; font.pixelSize: 12; wrapMode: Text.WordWrap; Layout.fillWidth: true }
-                Button {
-                    text: "Run scheduling simulation"
-                    onClicked: root.result = scheduler.simulate(input.text, algorithm.currentText, quantum.value)
-                }
-                Text {
-                    visible: root.result.error !== undefined && root.result.error.length > 0
-                    Layout.fillWidth: true; wrapMode: Text.Wrap
-                    text: root.result.error || ""; color: "#ffba7f"; font.pixelSize: 12
-                }
-                Item { Layout.fillHeight: true }
-                Text { text: "Supported: FCFS · Non-preemptive SJF · Round Robin"; color: "#a3afa3"; font.pixelSize: 11 }
-            }
-        }
-        Rectangle {
-            Layout.fillWidth: true; Layout.preferredHeight: 150
-            radius: 13; color: "#1b211c"; border.color: "#313a32"
-            ColumnLayout {
-                anchors.fill: parent; anchors.margins: 15; spacing: 10
-                Text { text: "GANTT CHART · SIMULATED CPU TIME"; color: "#b9c4b9"; font.pixelSize: 11; font.bold: true }
-                Row {
-                    id: bars
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 53
-                    spacing: 0
-                    Repeater {
-                        model: root.result.segments || []
-                        delegate: Rectangle {
-                            required property var modelData
+                        spacing: 3
+                        ScrollBar.vertical: ScrollBar {}
+
+                        delegate: RowLayout {
+                            id: jobRow
                             required property int index
-                            width: Number(modelData.duration) * bars.width / Math.max(1, root.result.totalTime || 1)
-                            height: 52
-                            color: modelData.idle ? "#39443a" : root.segmentColors[index % root.segmentColors.length]
-                            border.color: "#1b211c"; border.width: 1
-                            radius: 3
-                            Text { anchors.centerIn: parent; text: parent.width > 25 ? parent.modelData.name : ""; color: "#0b1827"; font.bold: true; font.pixelSize: 12 }
+                            required property string jobName
+                            required property int arrival
+                            required property int burst
+                            width: workload.width - 9
+                            height: 30
+                            spacing: 8
+
+                            TextField {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                Accessible.name: "Process name"
+                                placeholderText: "Process name"
+                                text: jobRow.jobName
+                                maximumLength: 20
+                                validator: RegularExpressionValidator { regularExpression: /[^,#]*/ }
+                                onTextEdited: {
+                                    jobs.setProperty(jobRow.index, "jobName", text)
+                                    root.outdated = true
+                                }
+                            }
+                            SpinBox {
+                                Layout.preferredWidth: 108
+                                Layout.fillHeight: true
+                                Accessible.name: "Arrival time"
+                                from: 0
+                                to: 1000
+                                value: jobRow.arrival
+                                editable: true
+                                onValueModified: {
+                                    jobs.setProperty(jobRow.index, "arrival", value)
+                                    root.outdated = true
+                                }
+                            }
+                            SpinBox {
+                                Layout.preferredWidth: 108
+                                Layout.fillHeight: true
+                                Accessible.name: "Burst time"
+                                from: 1
+                                to: 1000
+                                value: jobRow.burst
+                                editable: true
+                                onValueModified: {
+                                    jobs.setProperty(jobRow.index, "burst", value)
+                                    root.outdated = true
+                                }
+                            }
+                            Button {
+                                Layout.preferredWidth: 32
+                                Layout.fillHeight: true
+                                text: "×"
+                                Accessible.name: "Remove process " + jobRow.jobName
+                                onClicked: {
+                                    jobs.remove(jobRow.index)
+                                    root.outdated = true
+                                }
+                            }
+                        }
+                    }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Label {
+                            Layout.fillWidth: true
+                            text: root.result.error || (root.outdated ? "Run again to update the results." : "")
+                            wrapMode: Text.WordWrap
+                            color: root.result.error ? "#eab476" : "#a4afbe"
+                        }
+                        Button {
+                            text: "Run simulation"
+                            highlighted: true
+                            onClicked: root.run()
                         }
                     }
                 }
-                Text { text: root.result.totalTime ? "Start: 0     ·     Finish: " + root.result.totalTime + " time units     ·     Total CPU burst: " + root.result.totalBurst : "Run the simulation to generate a Gantt chart."; color: "#d2ddd1"; font.pixelSize: 12 }
             }
         }
-        RowLayout {
-            Layout.fillWidth: true; spacing: 12
-            MetricCard { Layout.fillWidth: true; implicitHeight: 102; caption: "AVG WAITING"; value: root.result.avgWaiting === undefined ? "—" : Number(root.result.avgWaiting).toFixed(2); subtitle: "Time units" }
-            MetricCard { Layout.fillWidth: true; implicitHeight: 102; caption: "AVG TURNAROUND"; value: root.result.avgTurnaround === undefined ? "—" : Number(root.result.avgTurnaround).toFixed(2); subtitle: "Time units"; accent: "#91d7ff" }
-            MetricCard { Layout.fillWidth: true; implicitHeight: 102; caption: "AVG RESPONSE"; value: root.result.avgResponse === undefined ? "—" : Number(root.result.avgResponse).toFixed(2); subtitle: "Time units"; accent: "#f1bf74" }
-        }
+
         Rectangle {
-            Layout.fillWidth: true; Layout.preferredHeight: 240
-            radius: 13; color: "#1b211c"; border.color: "#313a32"
+            Layout.fillWidth: true
+            implicitHeight: timelineContent.implicitHeight + 24
+            radius: 6
+            color: "#20242b"
+            border.color: "#343c48"
+
             ColumnLayout {
-                anchors.fill: parent; anchors.margins: 15; spacing: 7
-                Text { text: "CALCULATED PROCESS METRICS"; color: "#b9c4b9"; font.pixelSize: 11; font.bold: true }
+                id: timelineContent
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 12
+                spacing: 8
+
                 RowLayout {
                     Layout.fillWidth: true
+                    Label {
+                        Layout.fillWidth: true
+                        text: "Execution timeline"
+                        font.pixelSize: 16
+                        font.weight: Font.DemiBold
+                    }
+                    Label {
+                        visible: root.hasResult
+                        text: root.result.algorithm + " · " + root.result.totalTime + " time units"
+                        color: "#a4afbe"
+                    }
+                    Button {
+                        text: "−"
+                        Accessible.name: "Zoom out"
+                        enabled: root.hasResult && root.zoom > 1
+                        onClicked: root.zoom -= 1
+                    }
+                    Button {
+                        text: "+"
+                        Accessible.name: "Zoom in"
+                        enabled: root.hasResult && root.zoom < 3
+                        onClicked: root.zoom += 1
+                    }
+                }
+                Flow {
+                    Layout.fillWidth: true
+                    spacing: 10
+
                     Repeater {
-                        model: ["PROCESS", "AT", "BT", "CT", "TAT", "WT", "RT"]
-                        delegate: Text { text: modelData; Layout.fillWidth: true; color: "#a3afa3"; font.pixelSize: 10; font.bold: true }
+                        model: root.resultRows
+                        delegate: Row {
+                            id: legend
+                            required property int index
+                            required property var modelData
+                            spacing: 5
+                            Rectangle {
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 9
+                                height: 9
+                                radius: 2
+                                color: root.colorFor(legend.index)
+                            }
+                            Label {
+                                text: legend.modelData.name
+                                textFormat: Text.PlainText
+                                color: "#cbd5e1"
+                            }
+                        }
+                    }
+                    Label {
+                        visible: root.hasResult && root.result.totalTime > root.result.totalBurst
+                        text: "Idle · " + (root.result.totalTime - root.result.totalBurst) + " units"
+                        color: "#a4afbe"
+                    }
+                }
+                Flickable {
+                    id: timeline
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 94
+                    contentWidth: width * root.zoom
+                    contentHeight: height
+                    boundsBehavior: Flickable.StopAtBounds
+                    flickableDirection: Flickable.HorizontalFlick
+                    clip: true
+                    ScrollBar.horizontal: ScrollBar {}
+
+                    Canvas {
+                        id: chart
+                        width: timeline.contentWidth
+                        height: timeline.height - 9
+                        property var schedule: root.result
+                        onScheduleChanged: requestPaint()
+                        onWidthChanged: requestPaint()
+                        onHeightChanged: requestPaint()
+                        onPaint: {
+                            const ctx = getContext("2d")
+                            ctx.clearRect(0, 0, width, height)
+                            const duration = schedule.totalTime || 0
+                            if (duration === 0 || width <= 24)
+                                return
+
+                            const scale = (width - 24) / duration
+                            const xAt = time => 12 + time * scale
+                            const colors = new Map(schedule.rows.map((row, i) => [row.name, root.colorFor(i)]))
+                            ctx.font = "11px Consolas"
+                            ctx.textAlign = "center"
+                            ctx.textBaseline = "middle"
+                            ctx.fillStyle = "#171a20"
+                            ctx.fillRect(0, 0, width, height)
+
+                            const tickStep = Math.max(1, Math.ceil(duration / Math.max(1, Math.floor(width / 64))))
+                            ctx.lineWidth = 1
+                            for (let t = 0; t < duration; t += tickStep) {
+                                if (t !== 0 && (duration - t) * scale < 24)
+                                    break
+                                const x = xAt(t)
+                                ctx.strokeStyle = "#343c48"
+                                ctx.beginPath()
+                                ctx.moveTo(x, 6)
+                                ctx.lineTo(x, 57)
+                                ctx.stroke()
+                                ctx.fillStyle = "#a4afbe"
+                                ctx.fillText(String(t), x, 71)
+                            }
+                            ctx.fillStyle = "#a4afbe"
+                            ctx.textAlign = "right"
+                            ctx.fillText(String(duration), xAt(duration) + 8, 71)
+                            ctx.textAlign = "center"
+
+                            for (const segment of schedule.segments) {
+                                const x = xAt(segment.start)
+                                const length = segment.duration * scale
+                                ctx.fillStyle = segment.idle ? "#3b4655" : colors.get(segment.name)
+                                ctx.fillRect(x, 15, length, 34)
+                                if (length >= ctx.measureText(segment.name).width + 8) {
+                                    ctx.fillStyle = segment.idle ? "#eef1f5" : "#17202c"
+                                    ctx.fillText(segment.name, x + length / 2, 32)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 8
+
+            MetricCard {
+                Layout.fillWidth: true
+                caption: "Average waiting"
+                value: root.hasResult ? Number(root.result.avgWaiting).toFixed(2) : "—"
+                subtitle: "Time units"
+            }
+            MetricCard {
+                Layout.fillWidth: true
+                caption: "Average turnaround"
+                value: root.hasResult ? Number(root.result.avgTurnaround).toFixed(2) : "—"
+                subtitle: "Time units"
+                accent: "#c5a2f5"
+            }
+            MetricCard {
+                Layout.fillWidth: true
+                caption: "Average response"
+                value: root.hasResult ? Number(root.result.avgResponse).toFixed(2) : "—"
+                subtitle: "Time units"
+                accent: "#77d8be"
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 228
+            radius: 6
+            color: "#20242b"
+            border.color: "#343c48"
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 12
+                spacing: 5
+
+                Label { text: "Per-process results"; font.pixelSize: 16; font.weight: Font.DemiBold }
+                Row {
+                    Layout.fillWidth: true
+                    Layout.rightMargin: 9
+                    Repeater {
+                        model: ["Process", "Arrival", "Burst", "Finish", "Turnaround", "Wait", "Response"]
+                        delegate: Label {
+                            required property string modelData
+                            text: modelData
+                            width: parent.width / 7
+                            color: "#a4afbe"
+                        }
                     }
                 }
                 ListView {
-                    Layout.fillWidth: true; Layout.fillHeight: true
-                    clip: true; model: root.result.rows || []
+                    id: results
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    model: root.resultRows
+                    clip: true
                     ScrollBar.vertical: ScrollBar {}
+
                     delegate: Rectangle {
                         id: resultRow
-                        required property var modelData
                         required property int index
-                        width: ListView.view.width; height: 30; radius: 5
-                        color: index % 2 === 0 ? "#222a23" : "transparent"
-                        RowLayout {
+                        required property var modelData
+                        width: results.width - 9
+                        height: 30
+                        color: index % 2 ? "transparent" : "#272e38"
+
+                        Row {
                             anchors.fill: parent
                             Repeater {
-                                model: [resultRow.modelData.name, resultRow.modelData.arrival, resultRow.modelData.burst, resultRow.modelData.completion, resultRow.modelData.turnaround, resultRow.modelData.waiting, resultRow.modelData.response]
-                                delegate: Text { text: modelData; Layout.fillWidth: true; color: "#d2ddd1"; font.pixelSize: 11 }
+                                model: [
+                                    resultRow.modelData.name, resultRow.modelData.arrival,
+                                    resultRow.modelData.burst, resultRow.modelData.completion,
+                                    resultRow.modelData.turnaround, resultRow.modelData.waiting,
+                                    resultRow.modelData.response
+                                ]
+                                delegate: Label {
+                                    required property var modelData
+                                    width: parent.width / 7
+                                    height: parent.height
+                                    text: modelData
+                                    textFormat: Text.PlainText
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                    font.family: "Consolas"
+                                }
                             }
                         }
                     }
@@ -130,5 +499,41 @@ PageScroll {
             }
         }
     }
-    Component.onCompleted: root.result = scheduler.simulate("P1,0,8\nP2,1,4\nP3,2,9\nP4,3,5", "FCFS", 3)
+
+    Dialog {
+        id: csvDialog
+        parent: Overlay.overlay
+        anchors.centerIn: parent
+        width: Math.min(490, parent.width - 32)
+        title: "Edit workload as CSV"
+        modal: true
+        standardButtons: Dialog.Cancel
+        property string errorMessage: ""
+
+        contentItem: ColumnLayout {
+            Label { text: "One process per line: name, arrival, burst" }
+            ScrollView {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 160
+                clip: true
+                TextArea {
+                    id: csvInput
+                    font.family: "Consolas"
+                    wrapMode: TextEdit.Wrap
+                }
+            }
+            Label {
+                Layout.fillWidth: true
+                text: csvDialog.errorMessage
+                visible: text.length > 0
+                color: "#eab476"
+                wrapMode: Text.WordWrap
+            }
+            Button {
+                text: "Apply workload"
+                highlighted: true
+                onClicked: root.loadCsv()
+            }
+        }
+    }
 }

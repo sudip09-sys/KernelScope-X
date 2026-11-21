@@ -11,15 +11,15 @@ ColumnLayout {
         Layout.fillWidth: true
         wrapMode: Text.WordWrap
         text: header.heading
-        color: "#eff3eb"
+        color: "#eef1f5"
         font.family: "Segoe UI"
-        font.pixelSize: 34
+        font.pixelSize: 24
         font.weight: Font.DemiBold
     }
     Text {
         visible: text.length > 0
         text: header.subheading
-        color: "#b9c4b9"
+        color: "#a4afbe"
         font.pixelSize: 13
         wrapMode: Text.WordWrap
         Layout.fillWidth: true

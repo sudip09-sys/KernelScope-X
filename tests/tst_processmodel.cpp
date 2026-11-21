@@ -10,6 +10,7 @@ private slots:
     void preservesRowsAcrossMetricUpdates();
     void rejectsReusedAndUnverifiedIdentity();
     void filtersAndSortsIndependently();
+    void groupsVerifiedParentsAndChildren();
 };
 
 void ProcessModelTest::preservesRowsAcrossMetricUpdates() {
@@ -27,7 +28,8 @@ void ProcessModelTest::preservesRowsAcrossMetricUpdates() {
     QVERIFY(persistent.isValid());
     QCOMPARE(persistent.row(), 1);
     QCOMPARE(persistent.data(ProcessModel::CpuRole).toDouble(), 25.0);
-    QCOMPARE(updates.size(), 1);
+    QCOMPARE(updates.size(), 2);
+    QCOMPARE(updates.at(0).at(2).value<QList<int>>(), QList<int>{ProcessModel::CpuRole});
     QCOMPARE(resets.size(), 0);
 }
 
@@ -77,6 +79,28 @@ void ProcessModelTest::filtersAndSortsIndependently() {
     first.cpuPercent = 12;
     model.setProcesses({first, second});
     QCOMPARE(overview.index(0, 0).data(ProcessModel::PidRole).toUInt(), 42u);
+}
+
+void ProcessModelTest::groupsVerifiedParentsAndChildren() {
+    ProcessModel model;
+    ProcessFilterModel view;
+    view.setSourceModel(&model);
+    view.setSortMode(4);
+    const ProcessInfo parent{.pid = 200, .name = "parent.exe", .creationTicks = 100};
+    const ProcessInfo child{.pid = 40, .parentPid = 200, .name = "child.exe", .creationTicks = 120};
+    const ProcessInfo oldChild{.pid = 50, .parentPid = 200, .name = "unrelated.exe", .creationTicks = 90};
+    model.setProcesses({parent, oldChild, child});
+    QCOMPARE(view.rowCount(), 3);
+    QCOMPARE(view.index(0, 0).data(ProcessModel::PidRole).toUInt(), 50u);
+    QCOMPARE(view.index(0, 0).data(ProcessModel::TreeDepthRole).toInt(), 0);
+    QCOMPARE(view.index(1, 0).data(ProcessModel::PidRole).toUInt(), 200u);
+    QCOMPARE(view.index(2, 0).data(ProcessModel::PidRole).toUInt(), 40u);
+    QCOMPARE(view.index(2, 0).data(ProcessModel::TreeDepthRole).toInt(), 1);
+
+    model.setProcesses({oldChild, child});
+    QCOMPARE(view.rowCount(), 2);
+    QCOMPARE(view.index(0, 0).data(ProcessModel::PidRole).toUInt(), 40u);
+    QCOMPARE(view.index(0, 0).data(ProcessModel::TreeDepthRole).toInt(), 0);
 }
 
 QTEST_GUILESS_MAIN(ProcessModelTest)

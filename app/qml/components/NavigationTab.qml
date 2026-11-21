@@ -4,7 +4,7 @@ import QtQuick.Controls
 Button {
     id: control
     property bool active: false
-    implicitHeight: 44
+    implicitHeight: 36
     leftPadding: 13
     rightPadding: 13
     hoverEnabled: true
@@ -13,23 +13,24 @@ Button {
     contentItem: Text {
         text: control.text
         font: control.font
-        color: control.active ? "#c7f46a" : "#b9c4b9"
-        horizontalAlignment: Text.AlignHCenter
+        color: control.active ? "#d6eaff" : "#c7d0db"
+        horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
     }
 
     background: Rectangle {
-        color: control.down ? "#303d29" : control.hovered ? "#253026" : "transparent"
-        border.color: control.visualFocus ? "#c7f46a" : "transparent"
+        radius: 5
+        color: control.active ? "#26384e" : control.down || control.hovered ? "#282e38" : "transparent"
+        border.color: control.visualFocus ? "#79b9fa" : "transparent"
         Rectangle {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 10
-            anchors.rightMargin: 10
-            height: 3
+            anchors.top: parent.top
+            anchors.topMargin: 8
+            anchors.bottomMargin: 8
+            width: 3
             radius: 1
-            color: "#c7f46a"
+            color: "#79b9fa"
             visible: control.active
         }
     }

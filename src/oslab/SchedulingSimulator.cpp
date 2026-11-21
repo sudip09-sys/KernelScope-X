@@ -54,10 +54,10 @@ QVariantMap SchedulingSimulator::simulate(const QString &csv, const QString &alg
     if (jobs.isEmpty()) return failed("Enter at least one process.");
 
     QVariantList segments;
-    auto addSegment = [&](const QString &name, int from, int to) {
+    auto addSegment = [&](const QString &name, int from, int to, bool idle = false) {
         if (to <= from) return;
         segments.append(QVariantMap{{"name", name}, {"start", from}, {"end", to},
-                                    {"duration", to - from}, {"idle", name == "Idle"}});
+                                    {"duration", to - from}, {"idle", idle}});
     };
 
     QVector<int> ordered;
@@ -70,7 +70,7 @@ QVariantMap SchedulingSimulator::simulate(const QString &csv, const QString &alg
     if (algorithm == "FCFS") {
         for (int ix : ordered) {
             Job &p = jobs[ix];
-            if (clock < p.arrival) { addSegment("Idle", clock, p.arrival); clock = p.arrival; }
+            if (clock < p.arrival) { addSegment("Idle", clock, p.arrival, true); clock = p.arrival; }
             p.firstStart = clock;
             clock += p.burst;
             p.remaining = 0;
@@ -93,7 +93,7 @@ QVariantMap SchedulingSimulator::simulate(const QString &csv, const QString &alg
             if (chosen == -1) {
                 int nextArrival = std::numeric_limits<int>::max();
                 for (const Job &p : jobs) if (p.remaining > 0) nextArrival = std::min(nextArrival, p.arrival);
-                addSegment("Idle", clock, nextArrival);
+                addSegment("Idle", clock, nextArrival, true);
                 clock = nextArrival;
                 continue;
             }
@@ -113,7 +113,7 @@ QVariantMap SchedulingSimulator::simulate(const QString &csv, const QString &alg
                 ready.enqueue(ordered[nextArrival++]);
             if (ready.isEmpty()) {
                 int nextTime = jobs[ordered[nextArrival]].arrival;
-                addSegment("Idle", clock, nextTime);
+                addSegment("Idle", clock, nextTime, true);
                 clock = nextTime;
                 continue;
             }

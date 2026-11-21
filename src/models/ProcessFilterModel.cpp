@@ -14,7 +14,7 @@ void ProcessFilterModel::setSearch(const QString &value) {
     emit searchChanged();
 }
 void ProcessFilterModel::setSortMode(int value) {
-    if (value < 0 || value > 3) return;
+    if (value < 0 || value > 4) return;
     const bool changed = sortMode_ != value;
     sortMode_ = value;
     switch (value) {
@@ -22,6 +22,7 @@ void ProcessFilterModel::setSortMode(int value) {
     case 1: setSortRole(ProcessModel::MemoryMbRole); sort(0, Qt::DescendingOrder); break;
     case 2: setSortRole(ProcessModel::NameRole); sort(0, Qt::AscendingOrder); break;
     case 3: setSortRole(ProcessModel::PidRole); sort(0, Qt::AscendingOrder); break;
+    case 4: setSortRole(ProcessModel::TreeOrderRole); sort(0, Qt::AscendingOrder); break;
     }
     if (changed) emit sortModeChanged();
 }
