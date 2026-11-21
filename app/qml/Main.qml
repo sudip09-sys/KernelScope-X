@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -6,134 +7,148 @@ import "pages"
 
 ApplicationWindow {
     id: window
-    width: 1370
-    height: 860
+    width: 1320
+    height: 820
     minimumWidth: 800
     minimumHeight: 540
     visible: true
-    title: "KernelScope X — Native System Intelligence"
-    color: "#0c1424"
-    readonly property bool compact: width < 1050
-    property int pageIndex: 0
+    title: "KernelScope X " + Qt.application.version
+    color: "#15181d"
     font.family: "Segoe UI"
     font.pixelSize: 13
-    palette.window: "#121d2d"
-    palette.windowText: "#eaf1fc"
-    palette.base: "#101a2a"
-    palette.alternateBase: "#19273d"
-    palette.text: "#eaf1fc"
-    palette.button: "#23324a"
-    palette.buttonText: "#eaf1fc"
-    palette.placeholderText: "#94a8c5"
-    palette.highlight: "#287d78"
+
+    property int pageIndex: 0
+    readonly property bool narrow: width < 900
+    palette.window: "#20242b"
+    palette.windowText: "#eef1f5"
+    palette.base: "#171a20"
+    palette.alternateBase: "#232831"
+    palette.text: "#eef1f5"
+    palette.button: "#282e38"
+    palette.buttonText: "#eef1f5"
+    palette.placeholderText: "#a4afbe"
+    palette.highlight: "#234d75"
     palette.highlightedText: "#ffffff"
-    palette.mid: "#344760"
-    palette.dark: "#101a2a"
-    palette.light: "#3e5472"
-    palette.disabled.text: "#8492a8"
-    palette.disabled.buttonText: "#8492a8"
+    palette.mid: "#363e4b"
+    palette.dark: "#171a20"
+    palette.light: "#4e596b"
+    palette.disabled.text: "#929daa"
+    palette.disabled.buttonText: "#929daa"
+
+    header: Rectangle {
+        implicitHeight: 52
+        color: "#20242b"
+
+        RowLayout {
+            anchors.fill: parent
+            anchors.leftMargin: 16
+            anchors.rightMargin: 16
+            spacing: 11
+
+            Rectangle {
+                Layout.preferredWidth: 28
+                Layout.preferredHeight: 28
+                radius: 6
+                color: "#265078"
+                Label {
+                    anchors.centerIn: parent
+                    text: "KX"
+                    color: "#d6eaff"
+                    font.weight: Font.Bold
+                    font.pixelSize: 12
+                }
+            }
+            Label {
+                text: "KernelScope X"
+                font.pixelSize: 16
+                font.weight: Font.DemiBold
+            }
+            Label {
+                text: "v" + Qt.application.version
+                color: "#a4afbe"
+                font.family: "Consolas"
+                font.pixelSize: 11
+            }
+            Item { Layout.fillWidth: true }
+            Rectangle {
+                Layout.preferredWidth: 7
+                Layout.preferredHeight: 7
+                radius: 4
+                color: monitor.paused ? "#eab476" : "#79d5b1"
+            }
+            Label { text: monitor.paused ? "Paused" : monitor.updated ? "Live" : "Starting" }
+            Label {
+                visible: monitor.updated.length > 0
+                text: "Updated " + monitor.updated
+                color: "#a4afbe"
+                font.family: "Consolas"
+                font.pixelSize: 12
+            }
+            Button {
+                text: monitor.paused ? "Resume" : "Pause"
+                Layout.preferredHeight: 30
+                onClicked: monitor.paused = !monitor.paused
+            }
+            Button {
+                text: "Refresh"
+                Layout.preferredHeight: 30
+                highlighted: true
+                onClicked: monitor.refreshOnce()
+            }
+        }
+
+        Rectangle {
+            anchors.bottom: parent.bottom
+            width: parent.width
+            height: 1
+            color: "#333a46"
+        }
+    }
 
     RowLayout {
         anchors.fill: parent
         spacing: 0
 
         Rectangle {
-            Layout.preferredWidth: window.compact ? 176 : 222
+            Layout.preferredWidth: window.narrow ? 130 : 158
             Layout.fillHeight: true
-            color: "#101a2b"
-            border.color: "#23324b"
+            color: "#1b1f26"
+
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 17
-                spacing: 10
-                RowLayout {
-                    Layout.topMargin: 14
-                    Layout.bottomMargin: 26
-                    spacing: 11
-                    Rectangle {
-                        Layout.preferredWidth: 38; Layout.preferredHeight: 38; radius: 12
-                        color: "#173c41"
-                        Text {
-                            anchors.centerIn: parent
-                            text: "◈"
-                            color: "#35e3c1"
-                            font.pixelSize: 27
-                        }
-                    }
-                    Column {
-                        spacing: 1
-                        Text { text: "KERNELSCOPE"; font.bold: true; font.pixelSize: 16; color: "#f4f8ff" }
-                        Text { text: "X  /  v0.2.0"; font.pixelSize: 11; color: "#9aacca" }
-                    }
-                }
+                anchors.margins: 8
+                spacing: 4
+
                 Repeater {
-                    model: [
-                        { title: "Overview", glyph: "◉" },
-                        { title: "Processes", glyph: "▤" },
-                        { title: "Diagnostics", glyph: "⌁" },
-                        { title: "OS Laboratory", glyph: "⌘" }
-                    ]
-                    SidebarButton {
+                    model: ["Performance", "Processes", "Diagnostics", "OS Laboratory"]
+                    NavigationTab {
+                        required property int index
+                        required property string modelData
                         Layout.fillWidth: true
-                        text: modelData.title
-                        symbol: modelData.glyph
+                        text: modelData
                         active: window.pageIndex === index
-                        onActivated: window.pageIndex = index
+                        onClicked: window.pageIndex = index
                     }
                 }
                 Item { Layout.fillHeight: true }
-                Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: "#2a3850" }
-                RowLayout {
-                    spacing: 7
-                    Rectangle { Layout.preferredWidth: 7; Layout.preferredHeight: 7; radius: 4; color: monitor.paused ? "#e0ae66" : "#21d9bc" }
-                    Text { text: monitor.paused ? "Collection paused" : "Live telemetry"; color: "#a3b2ce"; font.pixelSize: 10 }
-                }
+            }
+
+            Rectangle {
+                anchors.right: parent.right
+                height: parent.height
+                width: 1
+                color: "#333a46"
             }
         }
 
-        ColumnLayout {
+        StackLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: 0
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 68
-                color: "#111d30"
-                border.color: "#27364d"
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.leftMargin: 28
-                    anchors.rightMargin: 26
-                    spacing: 12
-                    Text {
-                        text: ["System overview", "Process explorer", "Diagnostics & events", "Operating Systems laboratory"][window.pageIndex]
-                        color: "#dce8f6"
-                        font.pixelSize: 15
-                        font.weight: Font.DemiBold
-                        Layout.fillWidth: true
-                        elide: Text.ElideRight
-                    }
-                    Text { text: monitor.updated ? "Updated " + monitor.updated : "Starting collector…"; color: "#899db9"; font.pixelSize: 12 }
-                    Button {
-                        text: monitor.paused ? "Resume" : "Pause"
-                        onClicked: monitor.paused = !monitor.paused
-                    }
-                    Button {
-                        text: "Refresh"
-                        highlighted: true
-                        onClicked: monitor.refreshOnce()
-                    }
-                }
-            }
-            StackLayout {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                currentIndex: window.pageIndex
-                OverviewPage {}
-                ProcessesPage {}
-                DiagnosticsPage {}
-                OsLabPage {}
-            }
+            currentIndex: window.pageIndex
+            OverviewPage { onOpenProcesses: window.pageIndex = 1 }
+            ProcessesPage {}
+            DiagnosticsPage {}
+            OsLabPage {}
         }
     }
 }

@@ -2,17 +2,26 @@ import QtQuick
 import QtQuick.Layouts
 
 ColumnLayout {
-    property string heading: "Section"
+    id: header
+    property string heading: ""
     property string subheading: ""
-    spacing: 3
+    spacing: 4
+
     Text {
         Layout.fillWidth: true
         wrapMode: Text.WordWrap
-        text: heading; color: "#f4f8ff"
-        font.pixelSize: 26; font.weight: Font.Bold
+        text: header.heading
+        color: "#eef1f5"
+        font.family: "Segoe UI"
+        font.pixelSize: 24
+        font.weight: Font.DemiBold
     }
     Text {
-        text: subheading; color: "#93a4c3"
-        font.pixelSize: 13; wrapMode: Text.WordWrap; Layout.fillWidth: true
+        visible: text.length > 0
+        text: header.subheading
+        color: "#a4afbe"
+        font.pixelSize: 13
+        wrapMode: Text.WordWrap
+        Layout.fillWidth: true
     }
 }

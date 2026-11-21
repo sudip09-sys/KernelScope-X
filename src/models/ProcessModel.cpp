@@ -21,6 +21,8 @@ QVariant ProcessModel::data(const QModelIndex &index, int role) const {
     case DetailsAvailableRole: return p.detailsAvailable;
     case MemoryAvailableRole: return p.memoryAvailable;
     case IdentityRole: return identity(p);
+    case TreeDepthRole: return treePositions_.value(p.pid).depth;
+    case TreeOrderRole: return treePositions_.value(p.pid).order;
     default: return {};
     }
 }
@@ -29,7 +31,8 @@ QHash<int, QByteArray> ProcessModel::roleNames() const {
         {PidRole, "pid"}, {ParentPidRole, "parentPid"}, {NameRole, "name"},
         {CpuRole, "cpu"}, {MemoryMbRole, "memoryMb"}, {ThreadRole, "threadCount"},
         {PathRole, "path"}, {DetailsAvailableRole, "detailsAvailable"},
-        {MemoryAvailableRole, "memoryAvailable"}, {IdentityRole, "identity"}
+        {MemoryAvailableRole, "memoryAvailable"}, {IdentityRole, "identity"},
+        {TreeDepthRole, "treeDepth"}, {TreeOrderRole, "treeOrder"}
     };
 }
 void ProcessModel::setProcesses(QVector<ProcessInfo> processes) {
@@ -37,6 +40,36 @@ void ProcessModel::setProcesses(QVector<ProcessInfo> processes) {
         return left.pid < right.pid;
     };
     std::sort(processes.begin(), processes.end(), byPid);
+
+    QHash<quint32, QList<quint32>> children;
+    QList<quint32> roots;
+    for (const auto &process : std::as_const(processes)) {
+        ProcessInfo parentKey;
+        parentKey.pid = process.parentPid;
+        const auto parent = std::lower_bound(processes.cbegin(), processes.cend(), parentKey, byPid);
+
+        // Creation times rule out cycles and parent PIDs reused after the child started.
+        if (parent != processes.cend() && parent->pid == process.parentPid &&
+            parent->creationTicks > 0 && parent->creationTicks < process.creationTicks) {
+            children[parent->pid].append(process.pid);
+        } else {
+            roots.append(process.pid);
+        }
+    }
+
+    QHash<quint32, TreePosition> nextTree;
+    QList<QPair<quint32, int>> pending;
+    for (auto root = roots.crbegin(); root != roots.crend(); ++root)
+        pending.append({*root, 0});
+    while (!pending.isEmpty()) {
+        const auto [pid, depth] = pending.takeLast();
+        nextTree.insert(pid, {depth, int(nextTree.size())});
+        const auto childList = children.constFind(pid);
+        if (childList != children.cend()) {
+            for (auto child = childList->crbegin(); child != childList->crend(); ++child)
+                pending.append({*child, depth + 1});
+        }
+    }
 
     // Remove stale rows first. A recycled PID represents a new row.
     for (int row = int(processes_.size()) - 1; row >= 0; --row) {
@@ -72,6 +105,12 @@ void ProcessModel::setProcesses(QVector<ProcessInfo> processes) {
         if (old.detailsAvailable != next.detailsAvailable) roles << DetailsAvailableRole;
         processes_[row] = next;
         if (!roles.isEmpty()) emit dataChanged(index(row), index(row), roles);
+    }
+
+    if (treePositions_ != nextTree) {
+        treePositions_ = std::move(nextTree);
+        if (!processes_.isEmpty())
+            emit dataChanged(index(0), index(rowCount() - 1), {TreeDepthRole, TreeOrderRole});
     }
 }
 QVariantMap ProcessModel::details(qint64 pid) const {

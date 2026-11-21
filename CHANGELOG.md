@@ -2,7 +2,9 @@
 
 ## 0.2.0 — Desktop and process explorer
 
-- Shared dark Qt Fusion palette, scrollable pages and responsive card, lab and inspector layouts.
+- Compact dark Windows interface with a resource selector, CPU and memory sparklines, and a shared history graph.
+- Dense process table with a parent/child view for relationships verified by creation time.
+- Scheduling lab with an editable workload, CSV input, and a zoomable execution timeline.
 - Clearable process search, filtered counts, distinct row focus and selection, and an independent Overview CPU ranking.
 - Incremental process-model updates preserve existing rows across samples. A reused PID invalidates the old selection.
 - End-process confirmation captures the PID, executable name and exact creation timestamp. Windows rechecks the same process handle before acting.

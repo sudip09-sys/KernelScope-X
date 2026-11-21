@@ -30,6 +30,9 @@ ctest --test-dir build -C Debug --output-on-failure
 | LIVE-10 | Select a user process and change sort/search | Inspector stays on the same process instance while it exists |
 | LIVE-11 | Refresh while paused | A single sample updates and collection remains paused |
 | UI-01 | At 800 × 540, visit all pages and scroll to their final controls | Content fits horizontally. The inspector stacks below the list and all pages remain reachable |
+| UI-03 | Open Performance and switch between CPU and Memory | The chart and current reading switch together. The last 60 samples are shown on the chart |
+| LIVE-12 | Choose Parent / child in Processes | Verified children appear below their parent. Changing view keeps the selected process instance |
+| OS-05 | Edit the workload, run a simulation, and zoom the timeline | The chart labels the process spans and time units, and horizontal scrolling reveals the rest of the schedule |
 | UI-02 | Tab through navigation and process actions, then open a combo box and the dialog | Focus is visible and controls remain legible on the dark theme |
 | OS-01 | FCFS with P1(0,8),P2(1,4),P3(2,9),P4(3,5) | Avg WT=8.75, TAT=15.25 |
 | OS-02 | SJF with same input | Avg WT=7.75, TAT=14.25 |
