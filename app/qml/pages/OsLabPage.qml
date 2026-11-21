@@ -12,7 +12,7 @@ PageScroll {
         SectionHeader {
             Layout.fillWidth: true
             heading: "CPU Scheduling Laboratory"
-            subheading: "SIMULATED WORKLOADS ONLY · This page never changes the real Windows scheduler."
+            subheading: "Compare CPU scheduling algorithms on simulated workloads."
         }
         GridLayout {
             Layout.fillWidth: true
@@ -21,10 +21,10 @@ PageScroll {
             rowSpacing: 14
             Rectangle {
                 Layout.preferredWidth: 310; Layout.fillWidth: true; Layout.preferredHeight: 210
-                radius: 13; color: "#152139"; border.color: "#2a3954"
+                radius: 13; color: "#1b211c"; border.color: "#313a32"
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 14; spacing: 8
-                    Text { text: "PROCESS DATA (name, arrival, burst)"; color: "#97abc8"; font.pixelSize: 11; font.bold: true }
+                    Text { text: "PROCESS DATA (name, arrival, burst)"; color: "#b9c4b9"; font.pixelSize: 11; font.bold: true }
                     ScrollView {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -42,12 +42,12 @@ PageScroll {
             ColumnLayout {
                 Layout.fillWidth: true; spacing: 12
                 RowLayout {
-                    Text { text: "Algorithm"; color: "#9cadc9"; font.pixelSize: 12 }
+                    Text { text: "Algorithm"; color: "#b9c4b9"; font.pixelSize: 12 }
                     ComboBox { id: algorithm; Layout.preferredWidth: 110; model: ["FCFS", "SJF", "RR"] }
-                    Text { text: "Quantum"; color: "#9cadc9"; font.pixelSize: 12 }
+                    Text { text: "Quantum"; color: "#b9c4b9"; font.pixelSize: 12 }
                     SpinBox { id: quantum; from: 1; to: 1000; value: 3; enabled: algorithm.currentText === "RR" }
                 }
-                Text { text: "FCFS and SJF are non-preemptive; RR uses time slicing. All calculations include arrival times."; color: "#9fb1ca"; font.pixelSize: 12; wrapMode: Text.WordWrap; Layout.fillWidth: true }
+                Text { text: "FCFS and SJF are non-preemptive; RR uses time slicing. All calculations include arrival times."; color: "#b9c4b9"; font.pixelSize: 12; wrapMode: Text.WordWrap; Layout.fillWidth: true }
                 Button {
                     text: "Run scheduling simulation"
                     onClicked: root.result = scheduler.simulate(input.text, algorithm.currentText, quantum.value)
@@ -58,15 +58,15 @@ PageScroll {
                     text: root.result.error || ""; color: "#ffba7f"; font.pixelSize: 12
                 }
                 Item { Layout.fillHeight: true }
-                Text { text: "Supported: FCFS · Non-preemptive SJF · Round Robin"; color: "#6f91ad"; font.pixelSize: 11 }
+                Text { text: "Supported: FCFS · Non-preemptive SJF · Round Robin"; color: "#a3afa3"; font.pixelSize: 11 }
             }
         }
         Rectangle {
             Layout.fillWidth: true; Layout.preferredHeight: 150
-            radius: 13; color: "#152139"; border.color: "#2a3954"
+            radius: 13; color: "#1b211c"; border.color: "#313a32"
             ColumnLayout {
                 anchors.fill: parent; anchors.margins: 15; spacing: 10
-                Text { text: "GANTT CHART · SIMULATED CPU TIME"; color: "#9badca"; font.pixelSize: 11; font.bold: true }
+                Text { text: "GANTT CHART · SIMULATED CPU TIME"; color: "#b9c4b9"; font.pixelSize: 11; font.bold: true }
                 Row {
                     id: bars
                     Layout.fillWidth: true
@@ -79,33 +79,33 @@ PageScroll {
                             required property int index
                             width: Number(modelData.duration) * bars.width / Math.max(1, root.result.totalTime || 1)
                             height: 52
-                            color: modelData.idle ? "#38465e" : root.segmentColors[index % root.segmentColors.length]
-                            border.color: "#152139"; border.width: 1
+                            color: modelData.idle ? "#39443a" : root.segmentColors[index % root.segmentColors.length]
+                            border.color: "#1b211c"; border.width: 1
                             radius: 3
                             Text { anchors.centerIn: parent; text: parent.width > 25 ? parent.modelData.name : ""; color: "#0b1827"; font.bold: true; font.pixelSize: 12 }
                         }
                     }
                 }
-                Text { text: root.result.totalTime ? "Start: 0     ·     Finish: " + root.result.totalTime + " time units     ·     Total CPU burst: " + root.result.totalBurst : "Run the simulation to generate a Gantt chart."; color: "#a7bcd7"; font.pixelSize: 12 }
+                Text { text: root.result.totalTime ? "Start: 0     ·     Finish: " + root.result.totalTime + " time units     ·     Total CPU burst: " + root.result.totalBurst : "Run the simulation to generate a Gantt chart."; color: "#d2ddd1"; font.pixelSize: 12 }
             }
         }
         RowLayout {
             Layout.fillWidth: true; spacing: 12
             MetricCard { Layout.fillWidth: true; implicitHeight: 102; caption: "AVG WAITING"; value: root.result.avgWaiting === undefined ? "—" : Number(root.result.avgWaiting).toFixed(2); subtitle: "Time units" }
-            MetricCard { Layout.fillWidth: true; implicitHeight: 102; caption: "AVG TURNAROUND"; value: root.result.avgTurnaround === undefined ? "—" : Number(root.result.avgTurnaround).toFixed(2); subtitle: "Time units"; accent: "#9487ef" }
-            MetricCard { Layout.fillWidth: true; implicitHeight: 102; caption: "AVG RESPONSE"; value: root.result.avgResponse === undefined ? "—" : Number(root.result.avgResponse).toFixed(2); subtitle: "Time units"; accent: "#e1a866" }
+            MetricCard { Layout.fillWidth: true; implicitHeight: 102; caption: "AVG TURNAROUND"; value: root.result.avgTurnaround === undefined ? "—" : Number(root.result.avgTurnaround).toFixed(2); subtitle: "Time units"; accent: "#91d7ff" }
+            MetricCard { Layout.fillWidth: true; implicitHeight: 102; caption: "AVG RESPONSE"; value: root.result.avgResponse === undefined ? "—" : Number(root.result.avgResponse).toFixed(2); subtitle: "Time units"; accent: "#f1bf74" }
         }
         Rectangle {
             Layout.fillWidth: true; Layout.preferredHeight: 240
-            radius: 13; color: "#152139"; border.color: "#2a3954"
+            radius: 13; color: "#1b211c"; border.color: "#313a32"
             ColumnLayout {
                 anchors.fill: parent; anchors.margins: 15; spacing: 7
-                Text { text: "CALCULATED PROCESS METRICS"; color: "#9badca"; font.pixelSize: 11; font.bold: true }
+                Text { text: "CALCULATED PROCESS METRICS"; color: "#b9c4b9"; font.pixelSize: 11; font.bold: true }
                 RowLayout {
                     Layout.fillWidth: true
                     Repeater {
                         model: ["PROCESS", "AT", "BT", "CT", "TAT", "WT", "RT"]
-                        delegate: Text { text: modelData; Layout.fillWidth: true; color: "#7991b3"; font.pixelSize: 10; font.bold: true }
+                        delegate: Text { text: modelData; Layout.fillWidth: true; color: "#a3afa3"; font.pixelSize: 10; font.bold: true }
                     }
                 }
                 ListView {
@@ -117,12 +117,12 @@ PageScroll {
                         required property var modelData
                         required property int index
                         width: ListView.view.width; height: 30; radius: 5
-                        color: index % 2 === 0 ? "#1b2a42" : "transparent"
+                        color: index % 2 === 0 ? "#222a23" : "transparent"
                         RowLayout {
                             anchors.fill: parent
                             Repeater {
                                 model: [resultRow.modelData.name, resultRow.modelData.arrival, resultRow.modelData.burst, resultRow.modelData.completion, resultRow.modelData.turnaround, resultRow.modelData.waiting, resultRow.modelData.response]
-                                delegate: Text { text: modelData; Layout.fillWidth: true; color: "#d4e2f7"; font.pixelSize: 11 }
+                                delegate: Text { text: modelData; Layout.fillWidth: true; color: "#d2ddd1"; font.pixelSize: 11 }
                             }
                         }
                     }

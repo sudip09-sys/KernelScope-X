@@ -2,40 +2,60 @@ import QtQuick
 import QtQuick.Layouts
 
 Rectangle {
-    id: root
-    property string caption: "METRIC"
-    property string value: "—"
+    id: card
+    property string caption: ""
+    property string value: ""
     property string subtitle: ""
-    property color accent: "#21d9bc"
-    color: "#152139"
-    radius: 16
-    border.width: 1
-    border.color: "#2a3954"
-    implicitHeight: 134
-    implicitWidth: 200
+    property color accent: "#c7f46a"
+    property real ratio: -1
+
+    implicitHeight: 126
+    radius: 10
+    color: "#1b211c"
+    border.color: "#313a32"
+
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 18
-        spacing: 8
-        RowLayout {
+        anchors.margins: 15
+        spacing: 5
+
+        Text {
+            text: card.caption
+            color: "#b9c4b9"
+            font.pixelSize: 12
+            font.weight: Font.DemiBold
             Layout.fillWidth: true
-            Rectangle { Layout.preferredWidth: 8; Layout.preferredHeight: 8; radius: 4; color: root.accent }
-            Text {
-                text: root.caption
-                color: "#9baac5"; font.pixelSize: 11; font.weight: Font.DemiBold
-                font.letterSpacing: 1.1
-                Layout.fillWidth: true
+            elide: Text.ElideRight
+        }
+        Text {
+            text: card.value
+            color: card.accent
+            font.family: "Consolas"
+            font.pixelSize: 30
+            font.weight: Font.DemiBold
+        }
+        Text {
+            text: card.subtitle
+            color: "#a3afa3"
+            font.pixelSize: 12
+            Layout.fillWidth: true
+            elide: Text.ElideRight
+        }
+        Item { Layout.fillHeight: true }
+
+        Rectangle {
+            visible: card.ratio >= 0
+            Layout.fillWidth: true
+            Layout.preferredHeight: 4
+            color: "#303b30"
+            radius: 2
+
+            Rectangle {
+                width: parent.width * Math.max(0, Math.min(1, card.ratio))
+                height: parent.height
+                radius: 2
+                color: card.accent
             }
-        }
-        Text {
-            text: root.value
-            color: "#f4f8ff"; font.pixelSize: 31; font.weight: Font.Bold
-            elide: Text.ElideRight; Layout.fillWidth: true
-        }
-        Text {
-            text: root.subtitle
-            color: "#8595b4"; font.pixelSize: 12
-            elide: Text.ElideRight; Layout.fillWidth: true
         }
     }
 }

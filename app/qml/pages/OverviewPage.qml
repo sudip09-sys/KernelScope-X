@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -5,127 +6,254 @@ import "../components"
 
 PageScroll {
     id: root
+    signal openProcesses()
+
     ColumnLayout {
         width: root.availableWidth
-        spacing: 18
+        spacing: 16
+
         SectionHeader {
             Layout.fillWidth: true
-            heading: "Your system at a glance"
-            subheading: "Real Windows metrics · Collected locally every 1.5 seconds · CPU percentage is total-machine normalized"
+            heading: "System overview"
+            subheading: "Windows performance and active processes"
         }
+
         GridLayout {
             Layout.fillWidth: true
-            columns: width < 760 ? 2 : 4
+            columns: width < 690 ? 2 : 4
             columnSpacing: 12
             rowSpacing: 12
+
             MetricCard {
                 Layout.fillWidth: true
-                caption: "CPU UTILIZATION"
+                Layout.preferredWidth: 1
+                caption: "CPU utilization"
                 value: monitor.cpu.toFixed(1) + "%"
-                subtitle: "Across all logical processors"
-                accent: "#21d9bc"
+                subtitle: "All logical processors"
+                ratio: monitor.cpu / 100
             }
             MetricCard {
                 Layout.fillWidth: true
-                caption: "PHYSICAL MEMORY"
+                Layout.preferredWidth: 1
+                caption: "Physical memory"
                 value: monitor.memory.toFixed(1) + "%"
                 subtitle: monitor.usedGiB.toFixed(1) + " / " + monitor.totalGiB.toFixed(1) + " GiB"
-                accent: "#9585f0"
+                accent: "#91d7ff"
+                ratio: monitor.memory / 100
             }
             MetricCard {
                 Layout.fillWidth: true
-                caption: "PROCESSES"
+                Layout.preferredWidth: 1
+                caption: "Processes"
                 value: monitor.processes.toString()
-                subtitle: "Visible in latest snapshot"
-                accent: "#e0ac6c"
+                subtitle: "Current snapshot"
+                accent: "#eff3eb"
             }
             MetricCard {
                 Layout.fillWidth: true
-                caption: "THREADS"
+                Layout.preferredWidth: 1
+                caption: "Threads"
                 value: monitor.threads.toString()
-                subtitle: "Summed from process snapshot"
-                accent: "#68b7f6"
+                subtitle: "Across all processes"
+                accent: "#eff3eb"
             }
         }
-        Rectangle {
+
+        GridLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: 280
-            radius: 16; color: "#152139"; border.color: "#2a3954"
-            ColumnLayout {
-                anchors.fill: parent; anchors.margins: 20; spacing: 12
-                RowLayout {
-                    Text { text: "Live CPU utilization"; color: "#f1f6ff"; font.pixelSize: 17; font.bold: true }
-                    Item { Layout.fillWidth: true }
-                    Text { text: "Last 60 samples"; color: "#93a4c2"; font.pixelSize: 11 }
-                }
-                Canvas {
-                    id: graph
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    onWidthChanged: requestPaint()
-                    onHeightChanged: requestPaint()
-                    onPaint: {
-                        const ctx = getContext("2d")
-                        ctx.clearRect(0, 0, width, height)
-                        const points = monitor.cpuHistory
-                        const pad = 12
-                        ctx.lineWidth = 1
-                        for (let n = 0; n <= 4; ++n) {
-                            const yy = pad + (height - 2*pad) * n / 4
-                            ctx.strokeStyle = "#293d55"
-                            ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(width, yy); ctx.stroke()
-                        }
-                        if (points.length < 2) return
-                        ctx.beginPath()
-                        for (let i = 0; i < points.length; ++i) {
-                            const x = pad + (width - 2*pad) * i / Math.max(59, points.length - 1)
-                            const y = height - pad - (height - 2*pad) * Math.max(0, Math.min(100, points[i]))/100
-                            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y)
-                        }
-                        ctx.strokeStyle = "#28d8bd"; ctx.lineWidth = 2.5; ctx.stroke()
+            columns: width < 960 ? 1 : 2
+            columnSpacing: 14
+            rowSpacing: 14
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredWidth: 590
+                Layout.preferredHeight: 360
+                radius: 10
+                color: "#1b211c"
+                border.color: "#313a32"
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 18
+                    spacing: 10
+
+                    Label {
+                        text: "CPU history"
+                        font.pixelSize: 19
+                        font.weight: Font.DemiBold
                     }
-                    Connections { target: monitor; function onStatsChanged() { graph.requestPaint() } }
+                    Label {
+                        text: "Last 60 samples · utilization (%)"
+                        color: "#a3afa3"
+                    }
+
+                    Canvas {
+                        id: graph
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        onWidthChanged: requestPaint()
+                        onHeightChanged: requestPaint()
+                        onPaint: {
+                            const ctx = getContext("2d")
+                            ctx.clearRect(0, 0, width, height)
+                            const left = 34
+                            const right = width - 8
+                            const top = 10
+                            const bottom = height - 14
+                            if (right <= left || bottom <= top)
+                                return
+
+                            const points = monitor.cpuHistory
+                            const peak = points.length ? Math.max(...points) : 0
+                            const ceiling = peak <= 20 ? 20 : peak <= 50 ? 50 : 100
+                            const plotHeight = bottom - top
+                            const step = (right - left) / 59
+                            ctx.lineWidth = 1
+                            ctx.font = "11px Consolas"
+                            ctx.textAlign = "right"
+                            ctx.textBaseline = "middle"
+                            for (let n = 0; n <= 4; ++n) {
+                                const y = top + plotHeight * n / 4
+                                ctx.strokeStyle = "#364137"
+                                ctx.beginPath()
+                                ctx.moveTo(left, y)
+                                ctx.lineTo(right, y)
+                                ctx.stroke()
+                                ctx.fillStyle = "#a3afa3"
+                                ctx.fillText(String(ceiling * (4 - n) / 4), left - 8, y)
+                            }
+
+                            if (points.length === 0)
+                                return
+
+                            const xAt = i => right - step * (points.length - 1 - i)
+                            const yAt = i => bottom - plotHeight * Math.min(ceiling, Math.max(0, points[i])) / ceiling
+                            ctx.beginPath()
+                            ctx.moveTo(xAt(0), yAt(0))
+                            for (let i = 1; i < points.length; ++i)
+                                ctx.lineTo(xAt(i), yAt(i))
+
+                            ctx.lineTo(right, bottom)
+                            ctx.lineTo(xAt(0), bottom)
+                            ctx.closePath()
+                            const fill = ctx.createLinearGradient(0, top, 0, bottom)
+                            fill.addColorStop(0, "rgba(199, 244, 106, 0.47)")
+                            fill.addColorStop(1, "rgba(199, 244, 106, 0.08)")
+                            ctx.fillStyle = fill
+                            ctx.fill()
+
+                            ctx.beginPath()
+                            ctx.moveTo(xAt(0), yAt(0))
+                            for (let i = 1; i < points.length; ++i)
+                                ctx.lineTo(xAt(i), yAt(i))
+                            ctx.strokeStyle = "#c7f46a"
+                            ctx.lineWidth = 2
+                            ctx.stroke()
+                            ctx.beginPath()
+                            ctx.arc(right, yAt(points.length - 1), 3, 0, 2 * Math.PI)
+                            ctx.fillStyle = "#c7f46a"
+                            ctx.fill()
+                        }
+                        Connections {
+                            target: monitor
+                            function onStatsChanged() { graph.requestPaint() }
+                        }
+                    }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.leftMargin: 34
+                        Layout.rightMargin: 8
+                        Label { text: "Older"; color: "#a3afa3"; font.pixelSize: 11 }
+                        Item { Layout.fillWidth: true }
+                        Label { text: "Latest"; color: "#a3afa3"; font.pixelSize: 11 }
+                    }
                 }
-                RowLayout {
-                    Text { text: "0%"; color: "#667b9a"; font.pixelSize: 11 }
-                    Item { Layout.fillWidth: true }
-                    Text { text: "100% scale · 1.5s samples"; color: "#667b9a"; font.pixelSize: 11 }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredWidth: 390
+                Layout.preferredHeight: 360
+                radius: 10
+                color: "#1b211c"
+                border.color: "#313a32"
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 16
+                    spacing: 8
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Label {
+                            Layout.fillWidth: true
+                            text: "Top processes"
+                            font.pixelSize: 19
+                            font.weight: Font.DemiBold
+                        }
+                        Button { text: "View all"; onClicked: root.openProcesses() }
+                    }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.rightMargin: 12
+                        spacing: 10
+                        Label { text: "Process"; color: "#a3afa3"; Layout.fillWidth: true }
+                        Label { text: "PID"; color: "#a3afa3"; Layout.preferredWidth: 54; horizontalAlignment: Text.AlignRight }
+                        Label { text: "CPU"; color: "#a3afa3"; Layout.preferredWidth: 53; horizontalAlignment: Text.AlignRight }
+                        Label { text: "Memory"; color: "#a3afa3"; Layout.preferredWidth: 82; horizontalAlignment: Text.AlignRight }
+                    }
+                    ListView {
+                        id: ranking
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        model: overviewProxy
+                        clip: true
+                        reuseItems: true
+                        ScrollBar.vertical: ScrollBar {}
+
+                        delegate: Item {
+                            id: entry
+                            required property string name
+                            required property double pid
+                            required property real cpu
+                            required property var memoryMb
+                            required property bool memoryAvailable
+                            width: ranking.width - 12
+                            height: 38
+
+                            Rectangle {
+                                anchors.top: parent.top
+                                width: parent.width
+                                height: 1
+                                color: "#313a32"
+                            }
+                            RowLayout {
+                                anchors.fill: parent
+                                spacing: 10
+                                Label { text: entry.name; textFormat: Text.PlainText; Layout.fillWidth: true; elide: Text.ElideRight }
+                                Label { text: entry.pid; color: "#a3afa3"; font.family: "Consolas"; Layout.preferredWidth: 54; horizontalAlignment: Text.AlignRight }
+                                Label { text: entry.cpu.toFixed(1) + "%"; color: "#c7f46a"; font.family: "Consolas"; Layout.preferredWidth: 53; horizontalAlignment: Text.AlignRight }
+                                Label {
+                                    text: entry.memoryAvailable ? Number(entry.memoryMb).toFixed(1) + " MiB" : "—"
+                                    color: "#d2ddd1"
+                                    font.family: "Consolas"
+                                    Layout.preferredWidth: 82
+                                    horizontalAlignment: Text.AlignRight
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-        Rectangle {
-            Layout.fillWidth: true; Layout.preferredHeight: 250
-            radius: 16; color: "#152139"; border.color: "#2a3954"
-            ColumnLayout {
-                anchors.fill: parent; anchors.margins: 20; spacing: 12
-                RowLayout {
-                    Text { text: "Top processes by CPU"; color: "#f1f6ff"; font.pixelSize: 17; font.bold: true }
-                    Item { Layout.fillWidth: true }
-                    Text { text: "Live · Working set in MiB"; color: "#8798b7"; font.pixelSize: 11 }
-                }
-                ListView {
-                    Layout.fillWidth: true; Layout.fillHeight: true
-                    clip: true; model: overviewProxy
-                    ScrollBar.vertical: ScrollBar {}
-                    delegate: Rectangle {
-                        width: ListView.view.width; height: 36
-                        color: index % 2 === 0 ? "#19273d" : "transparent"
-                        radius: 7
-                        RowLayout {
-                            anchors.fill: parent; anchors.leftMargin: 13; anchors.rightMargin: 13
-                            Text { text: model.name; textFormat: Text.PlainText; color: "#dce6f7"; Layout.fillWidth: true; elide: Text.ElideRight; font.pixelSize: 12 }
-                            Text { text: "PID " + model.pid; color: "#96a9c7"; Layout.preferredWidth: 100; font.pixelSize: 11 }
-                            Text { text: Number(model.cpu).toFixed(1) + "% CPU"; color: "#2ddbbb"; Layout.preferredWidth: 90; font.pixelSize: 11 }
-                            Text { text: model.memoryAvailable ? Number(model.memoryMb).toFixed(1) + " MiB" : "N/A"; color: "#a7b5cc"; Layout.preferredWidth: 95; horizontalAlignment: Text.AlignRight; font.pixelSize: 11 }
-                        }
-                    }
-                }
-            }
-        }
-        Text {
+
+        Label {
             visible: monitor.error.length > 0
-            Layout.fillWidth: true; wrapMode: Text.Wrap
-            text: monitor.error; color: "#efb36b"; font.pixelSize: 12
+            Layout.fillWidth: true
+            wrapMode: Text.Wrap
+            text: monitor.error
+            color: "#f1bf74"
         }
     }
 }
