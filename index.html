@@ -1,56 +1,208 @@
 <!doctype html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="KernelScope X — native Windows system intelligence and Operating Systems laboratory."><meta name="theme-color" content="#10151d"><title>KernelScope X — System Intelligence</title>
-<style>
-:root{color-scheme:dark;--bg:#0c1017;--panel:#141b25;--line:#293342;--txt:#e8edf5;--muted:#9aa9bb;--accent:#6de5ca;--blue:#93a8fc;--amber:#f6b879;font-family:Inter,"Segoe UI",system-ui,sans-serif}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--txt)}a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit}button,a,input,select,textarea{outline-offset:4px}button{cursor:pointer;color:inherit}header{height:70px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 max(24px,calc((100vw - 1200px)/2));background:#0c1017e8;position:sticky;top:0;z-index:5;backdrop-filter:blur(14px)}.brand{font-weight:800;letter-spacing:-.04em;display:flex;gap:10px;align-items:center;white-space:nowrap}.mark{background:var(--accent);color:var(--bg);height:32px;width:32px;display:grid;place-items:center;border-radius:8px;font-size:21px}nav{display:flex;gap:22px;align-items:center;font-size:13px;color:var(--muted)}nav a:hover{color:var(--accent)}.wrap{width:min(1200px,calc(100% - 40px));margin:auto}.hero{padding:85px 0 55px;display:grid;grid-template-columns:1fr .8fr;gap:50px;align-items:center}.eyebrow,.label{font-size:11px;letter-spacing:.13em;color:var(--accent);font-weight:700;text-transform:uppercase}.hero h1{font-size:clamp(3rem,7vw,6.1rem);letter-spacing:-.085em;line-height:.94;margin:18px 0 25px;font-weight:750}.hero h1 span{color:var(--accent)}p{color:var(--muted);line-height:1.65}.lead{font-size:17px;max-width:580px}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}.btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;border-radius:8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);font-weight:650;font-size:13px}.btn:hover{border-color:var(--accent)}.primary{background:var(--accent);border-color:var(--accent);color:#09151a}.system{border:1px solid var(--line);border-radius:16px;padding:24px;background:linear-gradient(145deg,#1a2531,#111720);box-shadow:0 28px 80px #0005}.system h2{font-size:22px;letter-spacing:-.05em;margin:24px 0 4px}.system .line{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:13px 0;gap:12px;font-size:13px}.system .line span:first-child{color:var(--muted)}.system p{font-size:13px}.section{padding:36px 0 70px;scroll-margin-top:70px}.section h2{font-size:clamp(25px,4vw,38px);letter-spacing:-.055em;margin:7px 0 12px}.section-heading{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:20px}.section-heading p{margin:7px 0}.app{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#111720;box-shadow:0 25px 70px #0004}.appbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);gap:8px}.pill{font-size:11px;letter-spacing:.06em;background:#20342f;border:1px solid #39564e;color:var(--accent);padding:5px 8px;border-radius:5px;white-space:nowrap}.workspace{display:grid;grid-template-columns:190px 1fr;min-height:485px}.sidebar{padding:14px;border-right:1px solid var(--line);background:#10151d}.sidebar button{width:100%;border:0;background:none;text-align:left;color:var(--muted);padding:12px 10px;margin:5px 0;border-radius:6px;font-size:13px;white-space:nowrap}.sidebar button.active{background:#24372f;color:var(--accent);font-weight:700}.view{padding:23px;min-width:0}.view h3{margin:0 0 4px;font-size:22px;letter-spacing:-.04em}.view>p{font-size:12px;margin:4px 0 18px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card,.metric,.feature{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:18px}.metric small{font-size:11px;color:var(--muted);display:block}.metric strong{font-size:27px;font-weight:710;letter-spacing:-.04em;display:block;margin:12px 0}.metric span{font-size:11px;color:var(--accent)}.chart{height:185px;position:relative;margin-top:16px;overflow:hidden}.chart svg{width:100%;height:120px;margin-top:10px}.chart-head{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted)}.dot{display:inline-block;width:7px;height:7px;background:var(--accent);border-radius:50%;margin-right:5px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}input,select,textarea{border:1px solid #3a485c;background:#0e141d;color:var(--txt);padding:10px 12px;border-radius:7px;max-width:100%}input{min-width:0;flex:1}textarea{resize:vertical;width:100%;min-height:110px;font:13px/1.6 Consolas,monospace}.table-scroll{overflow:auto;max-height:285px;border:1px solid var(--line);border-radius:7px}table{border-collapse:collapse;width:100%;font-size:12px;text-align:left;white-space:nowrap}th{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;background:#202936;position:sticky;top:0}td,th{padding:12px;border-bottom:1px solid var(--line)}tbody tr:last-child td{border:0}tbody tr[data-pid]{cursor:pointer}tbody tr[data-pid]:hover,tbody tr.selected{background:#24372f}.inspector{margin-top:12px;display:flex;gap:22px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.inspector b{color:var(--txt)}.notice{background:#2a241d;color:#efc69d;border:1px solid #59432a;padding:12px;border-radius:7px;font-size:12px;line-height:1.5}.events{margin-top:12px;display:grid;gap:6px}.event{display:grid;grid-template-columns:65px 1fr;gap:10px;border-bottom:1px solid var(--line);padding:13px 0;font-size:12px}.event time{color:var(--muted)}.lab{display:grid;grid-template-columns:1fr 1fr;gap:14px}.result{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}.result>div{flex:1;min-width:96px;background:var(--panel);border:1px solid var(--line);padding:12px;border-radius:7px;font-size:11px;color:var(--muted)}.result strong{display:block;font-size:22px;color:var(--txt);margin-top:5px}.gantt{display:flex;margin-top:15px;border-radius:6px;overflow:hidden;min-height:36px;font-size:11px;align-items:stretch}.gantt span{display:grid;place-items:center;min-width:0;overflow:hidden;white-space:nowrap;color:#0d1720;font-weight:700;border-right:1px solid #1b2937}.features{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.feature h3{font-size:17px;margin:13px 0 5px;letter-spacing:-.035em}.feature p{font-size:13px;margin:7px 0}.feature .num{font:12px monospace;color:var(--accent)}.feature .status{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}.architecture{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.architecture .card{position:relative}.architecture b{display:block;margin:6px 0}.architecture p{font-size:12px;margin:0}.footer{border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:28px 0 45px;font-size:12px;color:var(--muted)}.footer a{text-decoration:underline}.tiny{font-size:11px!important;color:var(--muted)}[hidden]{display:none!important}.error{color:#ffb7a9;font-size:12px}.architecture .label{font-size:10px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent)}
-@media(max-width:850px){.hero{grid-template-columns:1fr;gap:24px;padding:52px 0 30px}.workspace{grid-template-columns:1fr}.sidebar{display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--line);gap:4px;padding:8px}.sidebar button{width:auto;margin:0}.features{grid-template-columns:repeat(2,1fr)}.architecture{grid-template-columns:1fr}.metrics{gap:8px}.metric{padding:12px}.view{padding:16px}.hero h1{max-width:620px}nav{gap:13px}nav a:not(:last-child){display:none}}@media(max-width:480px){.wrap{width:calc(100% - 24px)}.metrics{grid-template-columns:1fr 1fr}.features,.lab{grid-template-columns:1fr}.hero h1{font-size:3.7rem}.section-heading{display:block}.appbar{padding:12px}.appbar b{font-size:13px}.chart{padding:12px}.view{padding:12px}.sidebar button{font-size:12px}.metric strong{font-size:23px}.section{padding-bottom:42px}}
-</style>
-</head><body>
-<header><a class="brand" href="#top"><span class="mark" aria-hidden="true">⟐</span> KERNELSCOPE <span style="color:var(--accent)">X</span></a><nav><a href="#demo">Interactive demo</a><a href="#features">Capabilities</a><a href="#architecture">Architecture</a><a href="https://github.com/sudip09-sys/KernelScope-X">GitHub ↗</a></nav></header>
-<main id="top" class="wrap">
-<section class="hero"><div><div class="eyebrow">Windows-native · Operating Systems project</div><h1>Know your<br>system<span>.</span></h1><p class="lead">KernelScope X is a native C++ desktop utility for inspecting Windows processes, understanding resource usage, and exploring the algorithms behind operating systems.</p><div class="actions"><a href="#demo" class="btn primary">Explore interactive demo ↓</a><a href="https://github.com/sudip09-sys/KernelScope-X" class="btn">View source ↗</a></div><p class="tiny">C++20 &nbsp; / &nbsp; Qt 6 · QML &nbsp; / &nbsp; Win32 &nbsp; / &nbsp; CMake</p></div>
-<div class="system"><div class="label">Project status</div><h2>Native intelligence, transparent design.</h2><p>Built to inspect the actual Windows host while keeping monitoring and educational simulations separate.</p><div class="line"><span>v0.1.0 desktop prototype</span><b style="color:var(--accent)">Ran on Windows</b></div><div class="line"><span>v0.2.0 source upgrade</span><b>Merged · testing pending</b></div><div class="line"><span>Browser experience</span><b>Interactive simulation</b></div><div class="line"><span>Telemetry</span><b>Local-only in native app</b></div></div>
-</section>
-<section id="demo" class="section"><div class="section-heading"><div><div class="eyebrow">01 / Experience</div><h2>Explore the workspace.</h2><p>Try the browser edition's sample process explorer, diagnostics, and scheduling lab.</p></div><span class="pill">DEMO DATA ONLY</span></div>
-<div class="app"><div class="appbar"><b>KernelScope X / Web showcase</b><span class="pill">● BROWSER SIMULATION</span></div><div class="workspace">
-<div class="sidebar" role="tablist" aria-label="Demo modules"><button role="tab" aria-selected="true" aria-controls="overview" class="active" data-view="overview">◉ &nbsp; Overview</button><button role="tab" aria-selected="false" aria-controls="processes" data-view="processes">▤ &nbsp; Processes</button><button role="tab" aria-selected="false" aria-controls="diagnostics" data-view="diagnostics">⌁ &nbsp; Diagnostics</button><button role="tab" aria-selected="false" aria-controls="lab" data-view="lab">⌘ &nbsp; OS Laboratory</button></div>
-<div class="view">
-<section role="tabpanel" id="overview"><h3>System overview</h3><p>Illustrative telemetry. This page does not access your computer's processes.</p><div class="metrics"><div class="metric"><small>CPU UTILIZATION</small><strong id="cpu">24%</strong><span>Simulated sample</span></div><div class="metric"><small>MEMORY</small><strong id="ram">39%</strong><span>Sample 32 GiB system</span></div><div class="metric"><small>PROCESS COUNT</small><strong>7</strong><span>Demo dataset</span></div></div><div class="card chart"><div class="chart-head"><b>CPU history · example</b><button class="btn" id="play" style="padding:4px 9px">Pause animation</button></div><svg viewBox="0 0 530 110" preserveAspectRatio="none" role="img" aria-label="Simulated CPU utilization line chart"><path d="M0 0H530 M0 27H530 M0 54H530 M0 81H530 M0 109H530" stroke="#283444" fill="none"/><polyline id="graph" fill="none" stroke="#6de5ca" stroke-width="2.4" vector-effect="non-scaling-stroke" points="0,95 80,78 160,87 240,48 320,74 400,53 530,82"/></svg><div class="legend"><span><i class="dot"></i>Simulated CPU sample</span><span>Scale: 0–100%</span></div></div></section>
-<section role="tabpanel" id="processes" hidden><h3>Process explorer</h3><p>Search, sort, and inspect a fictional process dataset. No system actions are performed.</p><div class="toolbar"><input id="search" placeholder="Search name or PID" aria-label="Search processes"><select id="sort" aria-label="Sort sample processes"><option value="cpu">CPU descending</option><option value="ram">Memory descending</option><option value="name">Name A–Z</option><option value="pid">PID ascending</option></select></div><div class="table-scroll"><table><thead><tr><th>Process</th><th>PID</th><th>CPU</th><th>Memory</th><th>Threads</th></tr></thead><tbody id="rows"></tbody></table></div><div class="card inspector" id="inspector" aria-live="polite">Select a sample process to inspect its PID and parent.</div></section>
-<section role="tabpanel" id="diagnostics" hidden><h3>Diagnostics</h3><p>Example resource observations and process lifecycle events.</p><div class="notice">Demo rule: three consecutive CPU samples above 85% trigger a sustained-high-CPU observation in the native desktop app.</div><div class="events"><div class="event"><time>10:41:05</time><span><b style="color:var(--accent)">START</b> editor.exe · PID 4120</span></div><div class="event"><time>10:41:08</time><span><b>OBSERVE</b> CPU sample rising</span></div><div class="event"><time>10:41:11</time><span><b style="color:var(--amber)">ALERT</b> Sustained high CPU · sample</span></div><div class="event"><time>10:41:16</time><span><b>EXIT</b> sample-worker.exe · PID 6112</span></div></div><p class="tiny">All events above are illustrative, not recorded from your device.</p></section>
-<section role="tabpanel" id="lab" hidden><h3>CPU scheduling laboratory</h3><p>Enter a workload and calculate an actual simulated CPU schedule directly in your browser.</p><div class="lab"><div><label class="tiny" for="jobs">Process, arrival, burst (one per line)</label><textarea id="jobs" spellcheck="false">P1,0,8
-P2,1,4
-P3,2,9
-P4,3,5</textarea></div><div><label class="tiny" for="algo">Scheduling algorithm</label><select id="algo" style="display:block;width:100%;margin-bottom:8px"><option>FCFS</option><option>SJF</option><option>Round Robin</option></select><label class="tiny" for="quantum">Time quantum (Round Robin)</label><input type="number" id="quantum" min="1" max="1000" value="3" style="width:100%;margin-bottom:8px"><button class="btn primary" id="run" style="width:100%">Run simulation</button></div></div><div id="error" class="error" role="alert"></div><div id="gantt" class="gantt" aria-label="Scheduling Gantt chart"></div><div id="segments" class="tiny" style="margin-top:5px;overflow-wrap:anywhere"></div><div id="results" class="result" aria-live="polite"></div><div class="table-scroll" style="margin-top:12px;max-height:180px"><table><thead><tr><th>Process</th><th>Arrival</th><th>Burst</th><th>Completion</th><th>Waiting</th><th>Turnaround</th><th>Response</th></tr></thead><tbody id="schedule"></tbody></table></div></section>
-</div></div></div></section>
-<section id="features" class="section"><div class="eyebrow">02 / Native application</div><h2>More than a process list.</h2><div class="features"><article class="feature"><span class="num">01 · MONITOR</span><h3>Real Windows telemetry</h3><p>CPU, RAM, process counts and threads collected from Windows APIs in the native application.</p><span class="status">Implemented</span></article><article class="feature"><span class="num">02 · INSPECT</span><h3>Process DNA</h3><p>PID, parent PID, working set, executable paths and process identity checks.</p><span class="status">Implemented · deeper tree planned</span></article><article class="feature"><span class="num">03 · ANALYZE</span><h3>Diagnostics timeline</h3><p>Snapshot-based lifecycle observations and threshold alerts with local JSON export.</p><span class="status">Implemented</span></article><article class="feature"><span class="num">04 · LEARN</span><h3>Scheduling lab</h3><p>FCFS, SJF and Round Robin with calculated completion, waiting and turnaround times.</p><span class="status">Implemented · web simulation available</span></article><article class="feature"><span class="num">05 · INVESTIGATE</span><h3>Network &amp; hardware</h3><p>Extended system performance and per-process connection inspection.</p><span class="status">Roadmap</span></article><article class="feature"><span class="num">06 · REPLAY</span><h3>Time Machine</h3><p>Planned session recording and replay with persistent diagnostics.</p><span class="status">Roadmap</span></article></div></section>
-<section id="architecture" class="section"><div class="eyebrow">03 / Engineering</div><h2>Native by design.</h2><div class="architecture"><div class="card"><div class="label">01 Interface</div><b>Qt 6 / QML</b><p>Responsive UI, process tables, visualizations and isolated OS experiments.</p></div><div class="card"><div class="label">02 Application</div><b>C++20 &amp; QThread</b><p>Process models, sampling, diagnostics and event delivery without blocking the UI.</p></div><div class="card"><div class="label">03 Platform</div><b>Windows APIs</b><p>Process enumeration, CPU time and memory queries within legitimate OS permissions.</p></div></div><p class="tiny">The actual desktop application requires Windows and a compiled native build. This website runs independently and cannot read or terminate Windows processes.</p></section>
-<footer class="footer"><span>KernelScope X / An Operating Systems engineering project</span><a href="https://github.com/sudip09-sys/KernelScope-X">Source repository ↗ (access may be required)</a></footer>
+<html lang="en" data-theme="dark" data-motion="on">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090a0e">
+<meta name="description" content="KernelScope X — A native C++20 / Qt 6 Windows Task Manager and system intelligence project. Explore the interactive process map, scheduling lab and developer console.">
+<title>KernelScope X — See the System.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css?v=20261123-2">
+<script src="site.js?v=20261123-2" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="progress" aria-hidden="true"><span id="progress-line"></span></div>
+<header class="site-header">
+  <div class="shell header-inner">
+    <a class="wordmark" href="#overview" aria-label="KernelScope X, back to top"><span class="mark" aria-hidden="true">⌘</span>KERNELSCOPE<span>X</span></a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <a href="#workspace">PROCESS DNA</a>
+      <a href="#modules">MODULES</a>
+      <a href="#laboratory">OS LAB</a>
+      <a href="#console">CONSOLE</a>
+    </nav>
+    <div class="header-actions">
+      <button type="button" class="text-button" id="theme-toggle" aria-pressed="false" aria-label="Toggle light or dark theme">◐ Light</button>
+      <button type="button" class="text-button" id="motion-toggle" aria-pressed="true" title="Reduce animations">Motion on</button>
+      <button type="button" class="icon-button" id="palette-open" aria-label="Open quick navigation command palette" title="Quick navigation: Ctrl or Cmd + K">⌘ K</button>
+      <a class="header-link" href="https://github.com/sudip09-sys/KernelScope-X" target="_blank" rel="noopener noreferrer">SOURCE <span aria-hidden="true">↗</span></a>
+      <button type="button" class="text-button menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="mobile-nav">Menu +</button>
+    </div>
+  </div>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden>
+    <a href="#workspace">Process DNA</a><a href="#modules">Modules</a><a href="#laboratory">OS Laboratory</a><a href="#console">Console</a><a href="demo.html#demo">Full interactive demo ↗</a>
+  </nav>
+</header>
+<main id="main">
+  <section class="hero shell" id="overview" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <p class="kicker">NATIVE SYSTEM INTELLIGENCE <b>/ PROJECT 001</b></p>
+      <h1 id="hero-title"><span>SEE THE</span><span>SYSTEM<em>.</em></span></h1>
+      <p class="summary">Most task managers tell you <i>what</i> is running. <strong>KernelScope X</strong> is built to help you understand <i>why</i>. A native Windows process explorer, performance monitor and hands-on Operating Systems laboratory.</p>
+      <div class="actions">
+        <a class="cta cta-primary" href="demo.html#demo">EXPLORE LIVE-STYLE DEMO <span class="arrow" aria-hidden="true">↗</span></a>
+        <a class="cta cta-secondary" href="#workspace">INSPECT THE SYSTEM <span class="arrow" aria-hidden="true">↓</span></a>
+      </div>
+      <p class="sub">C++20 <i></i> Qt 6 / QML <i></i> Windows API <i></i> Open-source project</p>
+    </div>
+    <div class="hero-visual" id="hero-stage" aria-label="Interactive simulated system dashboard">
+      <div class="visual-halo" aria-hidden="true"></div>
+      <div class="desktop" id="hero-panel">
+        <div class="desktop-top"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>KERNELSCOPE_X / PERFORMANCE</span><span>SIMULATION</span></div>
+        <div class="desktop-body">
+          <div class="monitor-head"><strong>SYSTEM / OVERVIEW</strong><span class="live-pill"><span class="pulse"></span>DEMO MODE</span></div>
+          <p class="monitor-meta">Select a metric to inspect its simulated trend.</p>
+          <div class="monitor-cards" aria-label="Choose simulated metric">
+            <button class="monitor-card" type="button" data-metric="cpu" aria-pressed="true"><span>CPU LOAD</span><strong>24.1%</strong></button>
+            <button class="monitor-card" type="button" data-metric="memory" aria-pressed="false"><span>MEMORY</span><strong>39.0%</strong></button>
+            <button class="monitor-card" type="button" data-metric="threads" aria-pressed="false"><span>THREADS</span><strong>5.3K</strong></button>
+          </div>
+          <div class="monitor-chart">
+            <div class="chart-title"><b id="chart-selected">CPU · utilization</b><span>SAMPLE WINDOW / 20</span></div>
+            <svg viewBox="0 0 520 125" preserveAspectRatio="none" role="img" aria-label="Animated illustration of a simulated performance trend">
+              <g class="grid-lines"><path d="M0 15H520 M0 45H520 M0 75H520 M0 105H520"/></g>
+              <path id="trace-area" class="trace-area" d="M8,100 L512,100 L512,119 L8,119 Z"></path>
+              <polyline id="trace-line" class="trace" points="8,100 512,100"></polyline>
+            </svg>
+            <div class="chart-legend"><span>00:00</span><span>↑ 100% RANGE</span><span>00:30</span></div>
+          </div>
+          <div class="desktop-bottom"><span>BACKEND <strong>WIN32 / NATIVE DESKTOP</strong></span><span>THIS VISUAL USES DEMO DATA</span></div>
+        </div>
+      </div>
+      <div class="floating-tag one" aria-hidden="true"><b>PROCESS TRACKING</b><span>PID 9042 · 15 THREADS</span></div>
+      <div class="floating-tag two" aria-hidden="true"><b>COLLECTOR STATUS</b><span>BACKGROUND THREAD / QT</span></div>
+    </div>
+    <div class="hero-foot"><span class="down" aria-hidden="true">↓</span> SCROLL TO EXPLORE <span aria-hidden="true">/</span> BUILT TO UNDERSTAND OPERATING SYSTEMS</div>
+  </section>
+
+  <div class="strip" aria-hidden="true"><div class="strip-track">
+    <span>PROCESS INTELLIGENCE <b>✳</b> SYSTEM TELEMETRY <b>✳</b> CPU SCHEDULING <b>✳</b> REAL CODE / REAL DATA <b>✳</b> </span>
+    <span>PROCESS INTELLIGENCE <b>✳</b> SYSTEM TELEMETRY <b>✳</b> CPU SCHEDULING <b>✳</b> REAL CODE / REAL DATA <b>✳</b> </span>
+  </div></div>
+
+  <section class="section shell" id="workspace" aria-labelledby="workspace-title">
+    <div class="section-top reveal"><div><p class="eyebrow">01 / INTERACTIVE EXPLORER</p><h2 class="section-title" id="workspace-title">EVERY PROCESS<br>HAS A <em>STORY.</em></h2></div><p class="section-desc">PID. Parent PID. Threads. Memory. Explore a small fictional process family and see how operating systems connect running applications.</p></div>
+    <div class="workspace-grid">
+      <div class="process-map reveal" aria-label="Interactive process family map with example data">
+        <div class="map-top"><span>PROCESS TREE / EXAMPLE</span><span><span class="pulse"></span> SELECT A NODE</span></div>
+        <svg class="map-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <path data-to="shell" d="M50 27 Q35 33 28 48"/>
+          <path data-to="studio" d="M50 27 Q75 35 75 48"/>
+          <path data-to="browser" d="M28 53 Q21 65 24 80"/>
+          <path data-to="lab" d="M75 53 Q80 66 76 80"/>
+        </svg>
+        <button type="button" class="node" data-node="system" aria-pressed="false"><strong>System.exe</strong><small>PID 0004</small></button>
+        <button type="button" class="node" data-node="shell" aria-pressed="false"><strong>explorer.exe</strong><small>PID 1288</small></button>
+        <button type="button" class="node" data-node="studio" aria-pressed="true"><strong>KernelScopeX.exe</strong><small>PID 9042</small></button>
+        <button type="button" class="node" data-node="browser" aria-pressed="false"><strong>browser.exe</strong><small>PID 6620</small></button>
+        <button type="button" class="node" data-node="lab" aria-pressed="false"><strong>scheduler-demo</strong><small>PID 8124</small></button>
+        <div class="map-footer">DEMO TREE · FICTIONAL RELATIONSHIPS · NOT YOUR DEVICE</div>
+      </div>
+      <aside class="process-panel reveal" aria-live="polite" aria-labelledby="process-name">
+        <div class="panel-label"><span>PROCESS DNA / INSPECTOR</span><span>↘ 01–05</span></div>
+        <h3 id="process-name">KernelScopeX.exe</h3>
+        <p class="process-description" id="process-desc">Inspect a process to see its resource usage and family relationship.</p>
+        <div class="facts">
+          <div class="kv"><span>PROCESS ID</span><strong id="process-pid">9042</strong></div>
+          <div class="kv"><span>PARENT PID</span><strong id="process-parent">1288</strong></div>
+          <div class="kv"><span>THREAD COUNT</span><strong id="process-threads">15</strong></div>
+          <div class="kv"><span>WORKING SET</span><strong id="process-memory">185 MiB</strong></div>
+          <div class="kv"><span>CPU UTILIZATION</span><strong id="process-cpu">2.4%</strong></div>
+          <div class="kv"><span>STATUS</span><strong id="process-status">Monitoring</strong></div>
+        </div>
+        <div class="panel-bottom"><span class="note">SAMPLE INSPECTION / 0% DEVICE ACCESS</span><a class="cta cta-secondary" href="demo.html#demo">TRY PROCESS SEARCH ↗</a></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section shell" id="modules" aria-labelledby="modules-title">
+    <div class="section-top reveal"><div><p class="eyebrow">02 / FROM CODE TO INSIGHT</p><h2 class="section-title" id="modules-title">BUILT TO GO <em>DEEPER.</em></h2></div><p class="section-desc">Not another task list. A Windows-native monitoring utility paired with an educational space to understand OS concepts.</p></div>
+    <div class="feature-grid">
+      <article class="feature-card reveal"><div class="topline"><span>01 / MONITOR</span><span>IMPLEMENTED</span></div><div class="glyph" aria-hidden="true">%</div><h3>PERFORMANCE<br>OVERVIEW</h3><p>Sampled CPU and RAM, process counts, thread totals, and trends from genuine Windows APIs in the desktop app.</p><a href="demo.html#demo">VIEW BROWSER SHOWCASE ↗</a></article>
+      <article class="feature-card reveal"><div class="topline"><span>02 / INSPECT</span><span>IMPLEMENTED</span></div><div class="glyph alt" aria-hidden="true">⌘</div><h3>PROCESS<br>EXPLORER</h3><p>Search, sort and inspect running processes with PID/PPID, executable identity and permission-aware details.</p><a href="#workspace">EXPLORE PROCESS DNA ↗</a></article>
+      <article class="feature-card reveal"><div class="topline"><span>03 / DIAGNOSE</span><span>IMPLEMENTED</span></div><div class="glyph teal" aria-hidden="true">⌁</div><h3>EVENT<br>TIMELINE</h3><p>Track snapshot-based process appearance and disappearance, local exports, and sustained resource alerts.</p><a href="demo.html#demo">VIEW EXAMPLE EVENTS ↗</a></article>
+      <article class="feature-card reveal"><div class="topline"><span>04 / STUDY</span><span>IMPLEMENTED</span></div><div class="glyph teal" aria-hidden="true">≡</div><h3>SCHEDULING<br>LABORATORY</h3><p>Compare FCFS, SJF and Round Robin workloads using Gantt charts and turnaround/waiting metrics.</p><a href="#laboratory">TRY A COMPARISON ↗</a></article>
+      <article class="feature-card reveal"><div class="topline"><span>05 / INVESTIGATE</span><span>PLANNED</span></div><div class="glyph alt" aria-hidden="true">⌁</div><h3>HARDWARE &amp;<br>NETWORK</h3><p>Planned deeper insights into disk, GPU, thread details, and per-process network endpoints.</p><a href="#roadmap">SEE ROADMAP ↗</a></article>
+      <article class="feature-card reveal"><div class="topline"><span>06 / REPLAY</span><span>PLANNED</span></div><div class="glyph" aria-hidden="true">↺</div><h3>TIME<br>MACHINE</h3><p>Planned local monitoring session history for investigating earlier performance spikes.</p><a href="#roadmap">SEE ROADMAP ↗</a></article>
+    </div>
+  </section>
+
+  <section class="lab-section" id="laboratory" aria-labelledby="lab-title">
+    <div class="shell lab-layout">
+      <div class="lab-intro reveal">
+        <p class="eyebrow">03 / THEORY, MEET PRACTICE</p>
+        <h2 class="section-title" id="lab-title">CPU TIME.<br><em>YOUR RULES.</em></h2>
+        <p>What happens when processes arrive at different times? Switch scheduling algorithms and watch the Gantt chart and averages change. Every number here comes from a deterministic sample workload.</p>
+        <p class="mono" style="color:var(--soft);font-size:10px">P1(0,8) · P2(1,4) · P3(2,9) · P4(3,5)</p>
+        <a class="cta cta-primary" href="demo.html#demo">OPEN FULL SCHEDULING LAB <span class="arrow" aria-hidden="true">↗</span></a>
+      </div>
+      <div class="lab-board reveal">
+        <div class="bar-top"><span>ALGORITHM COMPARISON / SAMPLE JOBS</span><span>SIMULATED</span></div>
+        <div class="algo-tabs" role="group" aria-label="Select CPU scheduling algorithm">
+          <button type="button" data-algorithm="fcfs" aria-pressed="true">FCFS</button>
+          <button type="button" data-algorithm="sjf" aria-pressed="false">SJF</button>
+          <button type="button" data-algorithm="rr" aria-pressed="false">ROUND ROBIN</button>
+        </div>
+        <p id="lab-name" class="mono" style="font-size:10px;color:var(--soft);margin:13px 0 0">First Come First Served</p>
+        <div class="gantt" id="gantt-mini" aria-label="Simulated CPU scheduling Gantt chart"></div>
+        <div class="time-axis"><span>0 / START</span><span id="lab-finish">26</span><span>FINISH</span></div>
+        <div class="stat-row" aria-live="polite">
+          <div><small>AVG. WAITING</small><strong id="lab-wait">8.75</strong></div>
+          <div><small>AVG. TURNAROUND</small><strong id="lab-turn">15.25</strong></div>
+          <div><small>AVG. RESPONSE</small><strong id="lab-response">8.75</strong></div>
+        </div>
+        <p class="lab-note">Illustrative workload. The Windows desktop program does not modify your OS scheduler.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section shell console-section" id="console" aria-labelledby="console-title">
+    <div class="reveal">
+      <p class="eyebrow">04 / DEVELOPER EXPERIMENT</p>
+      <h2 class="section-title" id="console-title">TALK TO<br>THE <em>KERNEL.</em></h2>
+      <p class="section-desc" style="margin:20px 0 28px">A playful, safe command console to explore the project. Try <code>help</code>, <code>processes</code>, <code>schedule</code>, or <code>status</code>. It's a website interaction, not a real shell.</p>
+      <button class="cta cta-secondary" id="copy-link" type="button">COPY GITHUB LINK <span class="arrow" aria-hidden="true">↗</span></button>
+    </div>
+    <div class="terminal reveal">
+      <div class="terminal-header"><span><span class="pulse"></span> KERNELSCOPE_X / CONSOLE</span><span>READ-ONLY / WEB DEMO</span></div>
+      <div class="terminal-window" id="terminal-window" aria-live="polite" aria-label="Command console output"></div>
+      <form class="terminal-form" id="terminal-form" autocomplete="off">
+        <label for="terminal-input">ksx@web:~$</label>
+        <input id="terminal-input" type="text" maxlength="90" aria-label="Demo command" placeholder="type help..." spellcheck="false" autocomplete="off">
+        <button type="submit">ENTER ↵</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="section shell" id="roadmap">
+    <div class="section-top reveal"><div><p class="eyebrow">05 / SHIPPING PROGRESS</p><h2 class="section-title">THE ROAD <em>AHEAD.</em></h2></div><p class="section-desc">From a working native desktop foundation to a richer engineer-grade toolkit. Each release should be verified before it is called complete.</p></div>
+    <div class="roadmap">
+      <div class="reveal"><p class="num">01 / BUILT</p><h3>WINDOWS FOUNDATION</h3><p>v0.1.0 native build demonstrated; core monitoring, process exploration, diagnostics and OS scheduling simulator.</p></div>
+      <div class="reveal"><p class="num">02 / IN PROGRESS</p><h3>INTERFACE REFINEMENT</h3><p>v0.2.0 redesign and safe selection improvements, with further Windows acceptance testing needed.</p></div>
+      <div class="reveal"><p class="num">03 / PLANNED</p><h3>DEEPER INTELLIGENCE</h3><p>Network inspection, hardware data, persistent history, and new OS experiments including deadlocks.</p></div>
+    </div>
+  </section>
+  <section class="closer" aria-labelledby="closer-title"><div class="shell">
+    <p class="eyebrow">SYSTEMS ARE NOT BLACK BOXES.</p>
+    <h2 id="closer-title">GO BEYOND<br><span>THE TASK LIST.</span></h2>
+    <p>One project. Two experiences. A genuine Windows desktop utility and a browser showcase built to make Operating Systems concepts easier to see.</p>
+    <div class="actions">
+      <a class="cta cta-primary" href="demo.html#demo">EXPLORE THE INTERACTIVE DEMO <span class="arrow" aria-hidden="true">↗</span></a>
+      <a class="cta cta-secondary" href="https://github.com/sudip09-sys/KernelScope-X" target="_blank" rel="noopener noreferrer">VIEW C++ SOURCE <span class="arrow" aria-hidden="true">↗</span></a>
+    </div>
+  </div></section>
 </main>
-<script>
-"use strict";
-const $=id=>document.getElementById(id);
-const tabs=[...document.querySelectorAll("[data-view]")];
-tabs.forEach(btn=>btn.addEventListener("click",()=>{tabs.forEach(b=>{const selected=b===btn;b.classList.toggle("active",selected);b.setAttribute("aria-selected",String(selected));$(b.dataset.view).hidden=!selected});}));
-let sample=[12,15,11,22,18,32,28,42,31,25,18,24],playing=true;
-function tick(){if(!playing||document.hidden)return;const n=Math.max(4,Math.min(88,sample.at(-1)+(Math.random()-.48)*25));sample.push(n);sample.shift();$("cpu").textContent=Math.round(n)+"%";$("graph").setAttribute("points",sample.map((v,i)=>i*530/(sample.length-1)+","+(108-v*1.06)).join(" "));}
-$("play").onclick=()=>{playing=!playing;$("play").textContent=playing?"Pause animation":"Resume animation"};setInterval(tick,1300);
-const data=[{name:"editor.exe",pid:4120,ppid:1504,cpu:9.2,ram:570,threads:22},{name:"browser.exe",pid:5328,ppid:1504,cpu:7.1,ram:1264,threads:41},{name:"KernelScopeX.exe",pid:7032,ppid:1504,cpu:2.1,ram:186,threads:14},{name:"sample-worker.exe",pid:6112,ppid:4120,cpu:3.4,ram:94,threads:8},{name:"shell.exe",pid:1504,ppid:800,cpu:1.2,ram:230,threads:19},{name:"service-example.exe",pid:800,ppid:4,cpu:.4,ram:128,threads:7},{name:"audio-demo.exe",pid:2844,ppid:800,cpu:.6,ram:74,threads:5}];
-let selected=null;function cells(row,values){values.forEach(v=>{const td=document.createElement("td");td.textContent=v;row.append(td)})}
-function inspect(p){selected=p.pid;const el=$("inspector");el.replaceChildren();for(const [k,v] of [["Process",p.name],["PID",p.pid],["Parent PID",p.ppid],["Threads",p.threads]]){const a=document.createElement("span");a.textContent=k+": ";const b=document.createElement("b");b.textContent=v;a.append(b);el.append(a)}render()}
-function render(){const q=$("search").value.toLowerCase().trim(),sort=$("sort").value;const list=data.filter(p=>p.name.toLowerCase().includes(q)||String(p.pid).includes(q));list.sort((a,b)=>sort==="name"?a.name.localeCompare(b.name):sort==="pid"?a.pid-b.pid:b[sort]-a[sort]);const body=$("rows");body.replaceChildren();for(const p of list){const tr=document.createElement("tr");tr.dataset.pid=p.pid;tr.tabIndex=0;tr.classList.toggle("selected",p.pid===selected);cells(tr,[p.name,p.pid,p.cpu.toFixed(1)+"%",p.ram+" MiB",p.threads]);tr.onclick=()=>inspect(p);tr.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();inspect(p)}};body.append(tr)}if(!list.length){const tr=document.createElement("tr");const td=document.createElement("td");td.colSpan=5;td.textContent="No matching sample processes.";tr.append(td);body.append(tr)}}
-$("search").oninput=render;$("sort").onchange=render;render();
-function simulate(){
-const error=$("error"),g=$("gantt"),out=$("results"),body=$("schedule");error.textContent="";g.replaceChildren();out.replaceChildren();body.replaceChildren();$("segments").textContent="";
-try{
-const lines=$("jobs").value.trim().split(/\r?\n/).filter(x=>x.trim());if(!lines.length||lines.length>24)throw Error("Enter between 1 and 24 processes.");
-const names=new Set(),jobs=lines.map((l,i)=>{const a=l.split(",").map(x=>x.trim());if(a.length!==3||!a[0]||a[0].length>20||names.has(a[0])||!/^\d+$/.test(a[1])||!/^\d+$/.test(a[2]))throw Error("Use unique names and valid integer arrival/burst values.");names.add(a[0]);const arrival=Number(a[1]),burst=Number(a[2]);if(arrival>1000||burst<1||burst>1000)throw Error("Arrival must be 0–1000; burst must be 1–1000.");return{name:a[0],arrival,burst,left:burst,start:-1,finish:-1,i}});
-const alg=$("algo").value,q=Number($("quantum").value);if(alg==="Round Robin"&&(!Number.isInteger(q)||q<1||q>1000))throw Error("Time quantum must be an integer from 1–1000.");
-let t=0,n=0;const seg=[],order=jobs.slice().sort((a,b)=>a.arrival-b.arrival||a.i-b.i);function add(name,start,end){if(end<=start)return;const prev=seg.at(-1);if(prev&&prev.name===name&&prev.end===start)prev.end=end;else seg.push({name,start,end})}function run(p,d){if(p.start<0)p.start=t;add(p.name,t,t+d);t+=d;p.left-=d;if(!p.left){p.finish=t;n++}}
-if(alg==="Round Robin"){let k=0,ready=[];while(n<jobs.length){while(k<order.length&&order[k].arrival<=t)ready.push(order[k++]);if(!ready.length){add("Idle",t,order[k].arrival);t=order[k].arrival;continue}const p=ready.shift();run(p,Math.min(q,p.left));while(k<order.length&&order[k].arrival<=t)ready.push(order[k++]);if(p.left)ready.push(p)}}else{while(n<jobs.length){const ready=order.filter(p=>p.left&&p.arrival<=t);if(!ready.length){const next=order.find(p=>p.left);add("Idle",t,next.arrival);t=next.arrival;continue}if(alg==="SJF")ready.sort((a,b)=>a.burst-b.burst||a.arrival-b.arrival||a.i-b.i);run(ready[0],ready[0].left)}}
-let wait=0,turn=0,response=0;for(const p of jobs){const tat=p.finish-p.arrival,w=tat-p.burst,r=p.start-p.arrival;wait+=w;turn+=tat;response+=r;const tr=document.createElement("tr");cells(tr,[p.name,p.arrival,p.burst,p.finish,w,tat,r]);body.append(tr)}
-for(const [name,v] of [["Average waiting",wait/jobs.length],["Average turnaround",turn/jobs.length],["Average response",response/jobs.length]]){const el=document.createElement("div");el.textContent=name;const strong=document.createElement("strong");strong.textContent=v.toFixed(2);el.append(strong);out.append(el)}
-const colors=["#6de5ca","#93a8fc","#f6b879","#e59fce","#a9d293","#9dd5ef"];if(seg.length>500){$("segments").textContent="Schedule contains "+seg.length+" time segments; chart omitted for readability. Total time: "+t;}else{for(const s of seg){const bar=document.createElement("span");bar.style.flexGrow=s.end-s.start;bar.style.flexBasis="0";bar.style.background=s.name==="Idle"?"#8997a9":colors[jobs.findIndex(p=>p.name===s.name)%colors.length];bar.title=s.name+" | "+s.start+"–"+s.end;bar.textContent=s.name;g.append(bar)}$("segments").textContent=seg.slice(0,40).map(s=>s.name+" "+s.start+"–"+s.end).join(" · ")+(seg.length>40?" · …":"")+" | Total time: "+t}
-}catch(e){error.textContent=e.message}}
-$("run").onclick=simulate;simulate();
-</script></body></html>
+<footer class="site-footer"><div class="shell footer-inner"><span>© <span id="year">2026</span> KERNELSCOPE X / SAH SUDIP</span><span>BUILT WITH C++20 · QT 6 · CMAKE · WINDOWS API</span><a href="#overview">BACK TO TOP ↑</a></div></footer>
+<div class="palette" id="palette" hidden role="presentation">
+  <div class="palette-dialog" role="dialog" aria-modal="true" aria-label="Quick navigation command palette">
+    <div class="palette-header"><input id="palette-input" type="search" aria-label="Search navigation actions" placeholder="Where do you want to go?"><button type="button" id="palette-close" aria-label="Close quick navigation">✕</button></div>
+    <div class="palette-results" id="palette-results"></div>
+    <p class="palette-help">SHORTCUT: CTRL / ⌘ + K · ESC TO CLOSE</p>
+  </div>
+</div>
+<div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
+</body>
+</html>
