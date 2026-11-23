@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090a0e">
+<meta name="description" content="KernelScope X Memory Intelligence Lab: interactive page table translation, TLB simulation, and First Fit / Best Fit / Worst Fit memory allocation.">
+<title>Memory Intelligence Lab — KernelScope X</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="memory-lab.css?v=20261123a">
+<script defer src="memory-lab.js?v=20261123a"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar"><div class="shell nav">
+<a class="brand" href="index.html"><span class="logo">⌘</span> KERNELSCOPE <b>X</b></a>
+<nav class="links" aria-label="Memory Lab modules"><a href="#paging">01 / PAGING</a><a href="#allocation">02 / ALLOCATION</a><a href="#challenge">03 / CHALLENGE</a></nav>
+<a class="back" href="index.html">← PROJECT HOME</a>
+</div></header>
+<main id="main">
+<section class="hero shell">
+<div class="hero-content">
+<p class="eyebrow"><span class="dot"></span> KERNELSCOPE X / OS LABORATORY / MODULE 05</p>
+<h1>MEMORY<br><em>INTELLIGENCE.</em></h1>
+<p class="lead">See how an address moves from a <b>logical page</b> into a <b>physical frame</b>. Then make First Fit, Best Fit and Worst Fit compete for the same memory. Explore the CPU's translation cache and visualize fragmentation, one step at a time.</p>
+<div class="actions"><a class="btn primary" href="#paging">EXPLORE PAGING ↓</a><a class="btn secondary" href="#allocation">COMPARE ALLOCATION ↗</a></div>
+<p class="disclaimer">EDUCATIONAL SIMULATOR — NOT LIVE WINDOWS RAM DATA. The separate C++ desktop app monitors actual Windows resource metrics.</p>
+</div>
+<div class="hero-preview" aria-label="Example logical to physical translation">
+<div class="preview-head"><span>ADDRESS TRANSLATION / SAMPLE TRACE</span><span class="chip">SIMULATED</span></div>
+<div class="trace-large"><div><span>LOGICAL</span><strong>1500</strong></div><div class="trace-flow" aria-hidden="true">→<small>MMU</small></div><div><span>PHYSICAL</span><strong>9692</strong></div></div>
+<div class="trace-breakdown"><span>PAGE <b>1</b></span><span>OFFSET <b>476</b></span><span>FRAME <b>9</b></span></div>
+<div class="mini-grid"><span class="tiny mono">LOGICAL</span><div>0</div><div class="active">1</div><div>2</div><div>3</div><span class="tiny mono">FRAMES</span><div>5</div><div class="active">9</div><div>1</div><div>12</div></div>
+<p class="tiny">Page size 1024 bytes · Page 1 → Frame 9</p>
+</div>
+</section>
+<div class="ticker"><div class="shell">PAGE → FRAME <span>✳</span> LOGICAL ≠ PHYSICAL <span>✳</span> TLB CACHE <span>✳</span> EXTERNAL FRAGMENTATION <span>✳</span> MEMORY MANAGEMENT</div></div>
+<section id="paging" class="section shell">
+<div class="section-heading"><div><p class="eyebrow">01 / TRANSLATION ENGINE</p><h2>PAGING <em>IN MOTION.</em></h2></div><p>Four valid page-table entries from your lecture. Try any logical address and watch the page, offset and physical frame resolve—or fail safely.</p></div>
+<div class="workspace">
+<div class="panel config">
+<div class="panel-head"><span>VIRTUAL MEMORY CONFIG</span><span class="chip">PAGE SIZE = 1024 B</span></div>
+<label class="field-label" for="logical">LOGICAL ADDRESS / BYTES</label>
+<div class="address-input"><input id="logical" type="number" min="0" max="1000000" value="1500" step="1"><button class="btn primary" id="translate" type="button">TRANSLATE →</button></div>
+<div class="preset-title">TRY AN ADDRESS</div><div class="presets" id="address-presets" aria-label="Example logical addresses">
+<button type="button" data-address="0">0</button><button type="button" data-address="500">500</button><button type="button" data-address="1024">1024</button><button type="button" data-address="1500" class="selected">1500</button><button type="button" data-address="2048">2048</button><button type="button" data-address="3000">3000</button><button type="button" data-address="4095">4095</button><button type="button" data-address="5000">5000 ⚠</button>
+</div>
+<div class="page-table"><div class="table-title">PAGE TABLE / PRESENT ENTRIES</div><table><thead><tr><th>LOGICAL PAGE</th><th>PHYSICAL FRAME</th></tr></thead><tbody id="page-table-rows"></tbody></table></div>
+<div class="callout">ADDRESS FORMULA <strong>physical = frame × 1024 + offset</strong><small>page = floor(logical / 1024); offset = logical mod 1024</small></div>
+</div>
+<div class="panel visual">
+<div class="panel-head"><span>ADDRESS PATH VISUALIZER</span><span id="paging-state" class="chip">READY</span></div>
+<div class="translation-steps" aria-label="Live translation steps"><div><small>01 / LOGICAL ADDRESS</small><strong id="value-logical">1500</strong></div><div><small>02 / PAGE NUMBER</small><strong id="value-page">1</strong></div><div><small>03 / OFFSET</small><strong id="value-offset">476</strong></div><div><small>04 / FRAME NUMBER</small><strong id="value-frame">9</strong></div></div>
+<div class="arrowlane">LOGICAL SPACE <span aria-hidden="true">↓↓↓</span> PHYSICAL FRAME MAP</div>
+<div id="frame-map" class="frames" aria-label="Physical memory frame diagram"></div>
+<div id="paging-result" class="result success" role="status" aria-live="polite"><span>PHYSICAL ADDRESS</span><strong id="value-physical">9692</strong><small id="paging-explanation">Page 1 maps to frame 9. The offset 476 remains unchanged.</small></div>
+</div>
+</div>
+<div class="tlb-grid">
+<div class="panel">
+<div class="panel-head"><span>TRANSLATION LOOKASIDE BUFFER</span><span class="chip">LRU · 3 ENTRIES</span></div>
+<h3>A tiny cache for page translations.</h3><p>The TLB stores recently used page-to-frame mappings. A hit avoids a page-table lookup. A miss consults the page table and inserts the entry, evicting the least recently used mapping if full. This is a simplified TLB model.</p>
+<div class="tlb-slots" id="tlb-slots"></div>
+<div class="stats"><div><span>HITS</span><b id="tlb-hits">0</b></div><div><span>MISSES</span><b id="tlb-misses">0</b></div><div><span>HIT RATE</span><b id="tlb-rate">0%</b></div></div>
+<div class="small-actions"><button id="run-trace" class="btn secondary" type="button">RUN SAMPLE TRACE</button><button id="reset-tlb" class="btn secondary" type="button">CLEAR CACHE</button></div>
+</div>
+<div class="panel">
+<div class="panel-head"><span>TRANSLATION LOG</span><span class="chip">LOCAL SESSION</span></div>
+<div id="translation-log" class="log" aria-live="polite" aria-label="Recent address translations"></div>
+<p class="tiny">Try addresses 0, 1024, 2048, 1024 and 0 to observe cache hits and LRU replacement. Invalid pages cannot be translated.</p>
+</div>
+</div>
+</section>
+<section id="allocation" class="section section-dark"><div class="shell">
+<div class="section-heading"><div><p class="eyebrow">02 / MEMORY ALLOCATOR</p><h2>THREE STRATEGIES.<br><em>ONE WORKLOAD.</em></h2></div><p>Modify the available holes and request sizes, then step through allocations. Each colored block shows an actual computed placement and the free space left behind.</p></div>
+<div class="panel allocator-settings">
+<div><label class="field-label" for="holes">INITIAL HOLES / KB</label><input id="holes" type="text" value="100, 500, 200, 300, 600" spellcheck="false"><small>Comma-separated positive integers</small></div>
+<div><label class="field-label" for="requests">PROCESSES / KB</label><input id="requests" type="text" value="212, 417, 112, 426" spellcheck="false"><small>In order: P1, P2, P3, P4 ...</small></div>
+<div class="allocator-buttons"><button class="btn primary" id="alloc-step" type="button">NEXT ALLOCATION →</button><button class="btn secondary" id="alloc-all" type="button">RUN ALL</button><button class="btn secondary" id="alloc-reset" type="button">RESET</button></div>
+</div>
+<div class="allocator-status" id="alloc-status" role="status" aria-live="polite">Ready. The first request is P1 = 212 KB.</div>
+<div id="allocator-grid" class="allocator-grid" aria-label="First Fit, Best Fit and Worst Fit memory diagrams"></div>
+<div class="panel compare">
+<div class="panel-head"><span>COMPARISON / SAME WORKLOAD</span><span class="chip">SEQUENTIAL ALLOCATION</span></div>
+<div class="table-scroll"><table><thead><tr><th>PROCESS</th><th>SIZE</th><th>FIRST FIT</th><th>BEST FIT</th><th>WORST FIT</th></tr></thead><tbody id="alloc-rows"></tbody></table></div>
+<p class="tiny">A process must fit within a single contiguous free segment. Total free memory alone does not guarantee placement; small scattered holes cause external fragmentation. This model does not compact or coalesce holes because no deallocations occur.</p>
+</div>
+</div></section>
+<section id="challenge" class="section shell">
+<div class="section-heading"><div><p class="eyebrow">03 / SHOW YOUR PROFESSOR</p><h2>DON'T JUST<br><em>MEMORIZE IT.</em></h2></div><p>Make a prediction, test it, and explain the result. The exercises use your lecture's numbers so they're easy to verify.</p></div>
+<div class="challenge-grid">
+<article class="challenge"><span>CHALLENGE / 01</span><h3>THE MISSING PAGE</h3><p>Why does logical address <b>5000</b> fail, although the numeric address looks valid?</p><button type="button" class="reveal-answer btn secondary" aria-expanded="false">REVEAL EXPLANATION</button><div class="answer" hidden>5000 ÷ 1024 gives page 4 with offset 904. There is no valid page-table entry for page 4, so the memory-management hardware cannot translate it. The OS may raise a page fault or access violation depending on whether the page could be made present and what memory was accessed.</div></article>
+<article class="challenge"><span>CHALLENGE / 02</span><h3>THE 959 KB PARADOX</h3><p>First Fit leaves <b>959 KB</b> free after P1–P3. Why can't it place a <b>426 KB</b> process?</p><button type="button" class="reveal-answer btn secondary" aria-expanded="false">REVEAL EXPLANATION</button><div class="answer" hidden>Its remaining contiguous holes are 100, 176, 200, 300 and 183 KB. Their total is 959 KB, but the largest single hole is just 300 KB. P4 needs one contiguous block of at least 426 KB: an example of external fragmentation.</div></article>
+<article class="challenge"><span>CHALLENGE / 03</span><h3>WHY CACHE TRANSLATIONS?</h3><p>How can address translation stay fast without consulting the page table on every memory reference?</p><button type="button" class="reveal-answer btn secondary" aria-expanded="false">REVEAL EXPLANATION</button><div class="answer" hidden>The processor uses a Translation Lookaside Buffer (TLB) to cache recent virtual-page to physical-frame mappings. A hit avoids much of the cost of a page-table walk. Hardware and operating systems use more sophisticated TLB policies than the simplified LRU model in this lab.</div></article>
+</div>
+<div class="final-cta"><div><p class="eyebrow">BUILT FOR DEMONSTRATION</p><h3>REAL OS THEORY.<br><em>VISUAL PROOF.</em></h3></div><div><a class="btn primary" href="#paging">RUN IT AGAIN ↑</a> <a class="btn secondary" href="index.html">BACK TO KERNELSCOPE X ↗</a></div></div>
+</section>
+</main>
+<footer><div class="shell footer-inner"><span>KERNELSCOPE X · MEMORY INTELLIGENCE LAB</span><span>SIMULATED DATA / NATIVE WINDOWS MONITOR IS SEPARATE</span><a href="https://github.com/sudip09-sys/KernelScope-X">GITHUB SOURCE ↗</a></div></footer>
+</body></html>
