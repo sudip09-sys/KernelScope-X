@@ -14,6 +14,10 @@
 
 ## Project website
 
+**Memory Intelligence Lab:** [Interactive paging, TLB and First/Best/Worst Fit simulations](https://sudip09-sys.github.io/KernelScope-X/memory-lab.html) · [technical notes and lecture validation](docs/MEMORY_LAB.md). These are browser-based educational simulations, not measurements of host page tables. 
+
+
+
 **[Open the KernelScope X project homepage](https://sudip09-sys.github.io/KernelScope-X/)** · [Interactive browser demo](https://sudip09-sys.github.io/KernelScope-X/demo.html#demo)
 
 The website includes a cinematic project introduction, interactive fictional process tree, sample scheduling algorithm comparisons, a safe command console and the preserved process-monitoring browser demo. It uses **illustrative data**, not host telemetry; actual Windows process monitoring requires the compiled native C++/Qt application. The GitHub Pages site can publish from `main` or `gh-pages` (both contain the website files).
