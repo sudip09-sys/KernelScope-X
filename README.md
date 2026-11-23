@@ -12,6 +12,14 @@
 
 ---
 
+## Project website
+
+**[Open the KernelScope X project homepage](https://sudip09-sys.github.io/KernelScope-X/)** · [Interactive browser demo](https://sudip09-sys.github.io/KernelScope-X/demo.html#demo)
+
+The website includes a cinematic project introduction, interactive fictional process tree, sample scheduling algorithm comparisons, a safe command console and the preserved process-monitoring browser demo. It uses **illustrative data**, not host telemetry; actual Windows process monitoring requires the compiled native C++/Qt application. The GitHub Pages site can publish from `main` or `gh-pages` (both contain the website files).
+
+---
+
 ## Current implementation (v0.2.0 development milestone)
 
 This package now includes C++20 source, a Qt Quick/QML desktop interface, Windows telemetry collection on a background QThread, search/sort process models, process inspection, CPU trend graph, local diagnostic event history, a confirmation-gated process-end action, JSON snapshot export, and a **separate** FCFS/SJF/RR scheduling simulator with Qt Test cases.
