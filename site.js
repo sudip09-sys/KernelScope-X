@@ -178,11 +178,12 @@
   // Tiny explainable, safe, local browser terminal.
   const windowEl=$("terminal-window"),form=$("terminal-form"),input=$("terminal-input");
   const guide=[
-    ["help", "Available: help · about · processes · inspect · schedule · source · demo · clear · status"],
+    ["help", "Available: help · about · processes · inspect · schedule · memory · source · demo · clear · status"],
     ["about", "KernelScope X is a native Windows C++20/Qt 6 process monitoring and education project."],
     ["processes", "Sample process map: System.exe → explorer.exe → KernelScopeX.exe / browser.exe → scheduler-demo.exe"],
     ["inspect", "Click a node in Process DNA to inspect fictional PID/PPID, threads, and memory."],
     ["schedule", "The OS Lab preview demonstrates FCFS, SJF and Round Robin with reproducible sample workloads."],
+    ["memory", "Explore interactive paging, TLB cache and memory-fit algorithms at memory-lab.html."],
     ["source", "Project source: github.com/sudip09-sys/KernelScope-X"],
     ["demo", "Open demo.html for the full interactive browser simulation."],
     ["status", "Website: static. Native monitoring: Windows app only. Browser cannot inspect your running processes."],
@@ -208,6 +209,7 @@
     {label:"View interactive system map",target:"#workspace",keys:"map process inspector"},
     {label:"Explore native modules",target:"#modules",keys:"modules features"},
     {label:"Run scheduling comparison",target:"#laboratory",keys:"lab cpu scheduling"},
+    {label:"Open Memory Intelligence Lab",target:"memory-lab.html",keys:"paging memory allocation TLB First Fit Best Fit Worst Fit"},
     {label:"Open full browser demo",target:"demo.html#demo",keys:"browser interactive simulator"},
     {label:"Go to command console",target:"#console",keys:"terminal command"},
     {label:"View project on GitHub",target:"https://github.com/sudip09-sys/KernelScope-X",keys:"github source repository"}
