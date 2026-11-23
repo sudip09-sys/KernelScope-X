@@ -4,33 +4,24 @@
   "use strict";
   const root = document.documentElement;
   const $ = (id) => document.getElementById(id);
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const fine = window.matchMedia("(pointer:fine)");
   const safeGet = (key) => { try { return localStorage.getItem(key); } catch { return null; } };
   const safeSet = (key, value) => { try { localStorage.setItem(key, value); } catch { /* optional */ } };
-  let motionRequested = safeGet("ksx-motion") !== "off";
-  let motionEnabled = motionRequested && !reduced.matches;
+  const motionEnabled = false; // Do not animate or rotate interface automatically.
   let theme = safeGet("ksx-theme") === "light" ? "light" : "dark";
   const themeButton = $("theme-toggle");
-  const motionButton = $("motion-toggle");
-  function applyPreferences() {
-    motionEnabled = motionRequested && !reduced.matches;
+  function applyTheme() {
     root.dataset.theme = theme;
-    root.dataset.motion = motionEnabled ? "on" : "off";
+    root.dataset.motion = "off";
     themeButton.textContent = theme === "dark" ? "◐ Light" : "◑ Dark";
     themeButton.setAttribute("aria-pressed", String(theme === "light"));
-    motionButton.textContent = motionRequested ? "Motion on" : "Motion off";
-    motionButton.setAttribute("aria-pressed", String(motionRequested));
     document.querySelector('meta[name="theme-color"]').setAttribute("content", theme === "dark" ? "#090a0e" : "#f2f0ed");
-    if (!motionEnabled) {
-      const panel = $("hero-panel");
-      panel.style.transform = "";
-    }
   }
-  applyPreferences();
-  themeButton.addEventListener("click", () => { theme = theme === "dark" ? "light" : "dark"; safeSet("ksx-theme", theme); applyPreferences(); });
-  motionButton.addEventListener("click", () => { motionRequested = !motionRequested; safeSet("ksx-motion", motionRequested ? "on" : "off"); applyPreferences(); });
-  if (reduced.addEventListener) reduced.addEventListener("change", applyPreferences);
+  applyTheme();
+  themeButton.addEventListener("click", () => {
+    theme = theme === "dark" ? "light" : "dark";
+    safeSet("ksx-theme", theme);
+    applyTheme();
+  });
 
   // Sticky navigation and mobile menu
   const menuToggle = $("menu-toggle"), mobileNav = $("mobile-nav");
@@ -88,24 +79,7 @@
   }
   metricButtons.forEach(b=>b.addEventListener("click",()=>selectMetric(b.dataset.metric)));
   drawTrace();
-  window.setInterval(()=>{
-    if (!motionEnabled || document.hidden) return;
-    const seq=sequences[activeMetric];
-    const last=seq[seq.length-1];
-    const low=activeMetric==="cpu"?12:activeMetric==="memory"?38:35;
-    const high=activeMetric==="cpu"?74:activeMetric==="memory"?57:69;
-    seq.push(Math.min(high,Math.max(low,last+(Math.random()-.5)*10)));
-    seq.shift();
-    drawTrace();
-  },1600);
-
-  const stage=$("hero-stage"),panel=$("hero-panel");
-  stage.addEventListener("pointermove", e=>{
-    if(!motionEnabled || !fine.matches)return;
-    const r=stage.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
-    panel.style.transform="rotateY("+(x*5).toFixed(2)+"deg) rotateX("+(-y*4).toFixed(2)+"deg)";
-  });
-  stage.addEventListener("pointerleave",()=>panel.style.transform="");
+  // Static chart; selection updates on click, without continuous motion.
 
   // Process DNA mini-map is a keyboard-accessible, fictional graph
   const nodes={
