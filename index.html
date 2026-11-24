@@ -1,205 +1,169 @@
 <!doctype html>
-<html lang="en" data-theme="dark" data-motion="off">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090a0e">
-<meta name="description" content="KernelScope X — A native C++20 / Qt 6 Windows Task Manager and system intelligence project. Explore the interactive process map, scheduling lab and developer console.">
-<title>KernelScope X — See the System.</title>
+<meta name="theme-color" content="#0b0f16">
+<meta name="description" content="KernelScope X — a native Windows system monitor and an interactive Operating Systems learning laboratory.">
+<title>KernelScope X — Native System Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css?v=20261123-static">
-<script src="site.js?v=20261123-static" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css?v=20261124-clean">
+<script defer src="site.js?v=20261124-clean"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<div class="progress" aria-hidden="true"><span id="progress-line"></span></div>
-<header class="site-header">
-  <div class="shell header-inner">
-    <a class="wordmark" href="#overview" aria-label="KernelScope X, back to top"><span class="mark" aria-hidden="true">⌘</span>KERNELSCOPE<span>X</span></a>
-    <nav class="desktop-nav" aria-label="Main navigation">
-      <a href="#workspace">PROCESS DNA</a>
-      <a href="#modules">MODULES</a>
-      <a href="#laboratory">OS LAB</a>
-      <a href="memory-lab.html">MEMORY LAB ↗</a>
-      <a href="#console">CONSOLE</a>
+<header class="header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#home" aria-label="KernelScope X home"><span class="brand-mark" aria-hidden="true">⌘</span>KernelScope <b>X</b></a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#features">Features</a><a href="#labs">OS laboratory</a><a href="#architecture">How it works</a>
     </nav>
-    <div class="header-actions">
-      <button type="button" class="text-button" id="theme-toggle" aria-pressed="false" aria-label="Toggle light or dark theme">◐ Light</button>
-      <button type="button" class="icon-button" id="palette-open" aria-label="Open quick navigation command palette" title="Quick navigation: Ctrl or Cmd + K">⌘ K</button>
-      <a class="header-link" href="https://github.com/sudip09-sys/KernelScope-X" target="_blank" rel="noopener noreferrer">SOURCE <span aria-hidden="true">↗</span></a>
-      <button type="button" class="text-button menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="mobile-nav">Menu +</button>
+    <div class="nav-actions">
+      <a class="source-link" href="https://github.com/sudip09-sys/KernelScope-X" target="_blank" rel="noopener noreferrer">View GitHub ↗</a>
+      <button class="menu-toggle" id="menu-toggle" aria-controls="mobile-nav" aria-expanded="false" type="button">Menu</button>
     </div>
   </div>
   <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden>
-    <a href="#workspace">Process DNA</a><a href="#modules">Modules</a><a href="#laboratory">OS Laboratory</a><a href="memory-lab.html">Memory Lab ↗</a><a href="#console">Console</a><a href="demo.html#demo">Full interactive demo ↗</a>
+    <a href="#features">Features</a><a href="#labs">OS laboratory</a><a href="#architecture">How it works</a><a href="demo.html">Interactive demo ↗</a><a href="memory-lab.html">Memory Lab ↗</a>
   </nav>
 </header>
 <main id="main">
-  <section class="hero shell" id="overview" aria-labelledby="hero-title">
+  <section class="hero wrap" id="home">
     <div class="hero-copy">
-      <p class="kicker">NATIVE SYSTEM INTELLIGENCE <b>/ PROJECT 001</b></p>
-      <h1 id="hero-title"><span>SEE THE</span><span>SYSTEM<em>.</em></span></h1>
-      <p class="summary">Most task managers tell you <i>what</i> is running. <strong>KernelScope X</strong> is built to help you understand <i>why</i>. A native Windows process explorer, performance monitor and hands-on Operating Systems laboratory.</p>
+      <div class="eyebrow"><span class="dot" aria-hidden="true"></span> OPERATING SYSTEMS PROJECT / 2026</div>
+      <h1>See the system.<span>Understand <em>why.</em></span></h1>
+      <p class="lead">KernelScope X is a native Windows Task Manager built with C++ and Qt. It brings process inspection, performance monitoring, diagnostics and practical Operating Systems experiments into one focused experience.</p>
       <div class="actions">
-        <a class="cta cta-primary" href="demo.html#demo">EXPLORE LIVE-STYLE DEMO <span class="arrow" aria-hidden="true">↗</span></a>
-        <a class="cta cta-secondary" href="#workspace">INSPECT THE SYSTEM <span class="arrow" aria-hidden="true">↓</span></a>
-        <a class="cta cta-secondary" href="memory-lab.html">MEMORY INTELLIGENCE LAB <span class="arrow" aria-hidden="true">↗</span></a>
+        <a class="btn btn-primary" href="demo.html">Explore interactive demo ↗</a>
+        <a class="btn" href="#features">See the features ↓</a>
       </div>
-      <p class="sub">C++20 <i></i> Qt 6 / QML <i></i> Windows API <i></i> Open-source project</p>
+      <p class="hero-note">This website uses illustrative data. The separate Windows desktop app monitors actual system processes and resources.</p>
+      <ul class="tags" aria-label="Technologies">
+        <li>C++20</li><li>Qt 6 / QML</li><li>Windows API</li><li>CMake</li>
+      </ul>
     </div>
-    <div class="hero-visual" id="hero-stage" aria-label="Interactive simulated system dashboard">
-      <div class="visual-halo" aria-hidden="true"></div>
-      <div class="desktop" id="hero-panel">
-        <div class="desktop-top"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>KERNELSCOPE_X / PERFORMANCE</span><span>SIMULATION</span></div>
-        <div class="desktop-body">
-          <div class="monitor-head"><strong>SYSTEM / OVERVIEW</strong><span class="live-pill"><span class="pulse"></span>DEMO MODE</span></div>
-          <p class="monitor-meta">Select a metric to inspect its simulated trend.</p>
-          <div class="monitor-cards" aria-label="Choose simulated metric">
-            <button class="monitor-card" type="button" data-metric="cpu" aria-pressed="true"><span>CPU LOAD</span><strong>24.1%</strong></button>
-            <button class="monitor-card" type="button" data-metric="memory" aria-pressed="false"><span>MEMORY</span><strong>39.0%</strong></button>
-            <button class="monitor-card" type="button" data-metric="threads" aria-pressed="false"><span>THREADS</span><strong>5.3K</strong></button>
+    <div class="preview" aria-label="Interactive simulated Windows performance monitor">
+      <div class="preview-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>KernelScope X / Performance</span><span>DEMO</span></div>
+      <div class="preview-content">
+        <div class="preview-title"><h3>System overview</h3><span class="sample">Sample data</span></div>
+        <div class="metric-grid" role="group" aria-label="Choose a sample performance chart">
+          <button class="metric" type="button" data-metric="cpu" aria-pressed="true"><small>CPU</small><strong>24.1%</strong><span>Sample</span></button>
+          <button class="metric" type="button" data-metric="ram" aria-pressed="false"><small>RAM</small><strong>39.0%</strong><span>Sample</span></button>
+          <button class="metric" type="button" data-metric="threads" aria-pressed="false"><small>Threads</small><strong>5.3K</strong><span>Sample</span></button>
+        </div>
+        <div class="trend-panel">
+          <div class="trend-top"><span id="trend-name">CPU utilization · sample trend</span><span>20 SAMPLES</span></div>
+          <svg viewBox="0 0 400 112" preserveAspectRatio="none" role="img" aria-label="Manually selectable example performance trend">
+            <path class="chart-grid" d="M4 15H396 M4 40H396 M4 65H396 M4 90H396"/>
+            <polyline class="trend-line" id="trend-line" points="4,75 396,75"/>
+          </svg>
+        </div>
+      </div>
+      <div class="preview-foot"><span><b>●</b> WINDOWS APP: REAL</span><span>WEB PREVIEW: SIMULATED</span></div>
+    </div>
+  </section>
+
+  <section class="section shaded" id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="section-label">01 / THE DESKTOP APP</div><h2>A clearer view of <em>Windows.</em></h2></div>
+        <p>Purpose-built for inspecting real processes and resource usage, rather than presenting another static task list.</p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature">
+          <div class="feature-meta"><span class="feature-icon" aria-hidden="true">▣</span><span class="feature-state">NATIVE APP</span></div>
+          <h3>Performance overview</h3>
+          <p>Track actual Windows CPU usage, physical memory, running process counts and total threads in a responsive interface.</p>
+        </article>
+        <article class="feature">
+          <div class="feature-meta"><span class="feature-icon" aria-hidden="true">⌕</span><span class="feature-state">NATIVE APP</span></div>
+          <h3>Process Explorer</h3>
+          <p>Search and sort running processes. Inspect PID, parent PID, threads, executable paths and available working-set memory.</p>
+        </article>
+        <article class="feature">
+          <div class="feature-meta"><span class="feature-icon" aria-hidden="true">⌁</span><span class="feature-state">NATIVE APP</span></div>
+          <h3>Diagnostics & events</h3>
+          <p>See snapshot-based process events and sustained resource alerts, with local JSON export and safeguards on process control.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="labs">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="section-label">02 / OPERATING SYSTEMS LAB</div><h2>Learn by <em>experimenting.</em></h2></div>
+        <p>Try two real calculations using sample workloads. Open the full labs for deeper controls and additional visualizations.</p>
+      </div>
+      <div class="lab-grid">
+        <article class="lab-card">
+          <div class="lab-meta"><span>CPU SCHEDULING</span><span>SIMULATED</span></div>
+          <h3>Who gets CPU time first?</h3>
+          <p>Switch between scheduling strategies to compare execution order, waiting time and turnaround time.</p>
+          <div class="tabs" role="group" aria-label="Scheduling algorithm">
+            <button type="button" data-algorithm="fcfs" aria-pressed="true">FCFS</button>
+            <button type="button" data-algorithm="sjf" aria-pressed="false">SJF</button>
+            <button type="button" data-algorithm="rr" aria-pressed="false">Round Robin</button>
           </div>
-          <div class="monitor-chart">
-            <div class="chart-title"><b id="chart-selected">CPU · utilization</b><span>SAMPLE WINDOW / 20</span></div>
-            <svg viewBox="0 0 520 125" preserveAspectRatio="none" role="img" aria-label="Animated illustration of a simulated performance trend">
-              <g class="grid-lines"><path d="M0 15H520 M0 45H520 M0 75H520 M0 105H520"/></g>
-              <path id="trace-area" class="trace-area" d="M8,100 L512,100 L512,119 L8,119 Z"></path>
-              <polyline id="trace-line" class="trace" points="8,100 512,100"></polyline>
-            </svg>
-            <div class="chart-legend"><span>00:00</span><span>↑ 100% RANGE</span><span>00:30</span></div>
+          <p class="workload">P1(0,8) · P2(1,4) · P3(2,9) · P4(3,5) · RR Q=3</p>
+          <div id="gantt" class="gantt" aria-label="Computed scheduling Gantt chart"></div>
+          <div class="time-labels"><span>START 0</span><span>FINISH <span id="finish-time">26</span></span></div>
+          <div class="lab-stats" aria-live="polite">
+            <div><small>AVG WAITING</small><b id="avg-wait">8.75</b></div>
+            <div><small>AVG TURNAROUND</small><b id="avg-turn">15.25</b></div>
+            <div><small>AVG RESPONSE</small><b id="avg-response">8.75</b></div>
           </div>
-          <div class="desktop-bottom"><span>BACKEND <strong>WIN32 / NATIVE DESKTOP</strong></span><span>THIS VISUAL USES DEMO DATA</span></div>
-        </div>
-      </div>
-      <div class="floating-tag one" aria-hidden="true"><b>PROCESS TRACKING</b><span>PID 9042 · 15 THREADS</span></div>
-      <div class="floating-tag two" aria-hidden="true"><b>COLLECTOR STATUS</b><span>BACKGROUND THREAD / QT</span></div>
-    </div>
-    <div class="hero-foot"><span class="down" aria-hidden="true">↓</span> SCROLL TO EXPLORE <span aria-hidden="true">/</span> BUILT TO UNDERSTAND OPERATING SYSTEMS</div>
-  </section>
-
-  <section class="section shell" id="workspace" aria-labelledby="workspace-title">
-    <div class="section-top reveal"><div><p class="eyebrow">01 / INTERACTIVE EXPLORER</p><h2 class="section-title" id="workspace-title">EVERY PROCESS<br>HAS A <em>STORY.</em></h2></div><p class="section-desc">PID. Parent PID. Threads. Memory. Explore a small fictional process family and see how operating systems connect running applications.</p></div>
-    <div class="workspace-grid">
-      <div class="process-map reveal" aria-label="Interactive process family map with example data">
-        <div class="map-top"><span>PROCESS TREE / EXAMPLE</span><span><span class="pulse"></span> SELECT A NODE</span></div>
-        <svg class="map-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <path data-to="shell" d="M50 27 Q35 33 28 48"/>
-          <path data-to="studio" d="M28 51 Q49 43 75 51"/>
-          <path data-to="browser" d="M28 53 Q21 65 24 80"/>
-          <path data-to="lab" d="M75 53 Q80 66 76 80"/>
-        </svg>
-        <button type="button" class="node" data-node="system" aria-pressed="false"><strong>System.exe</strong><small>PID 0004</small></button>
-        <button type="button" class="node" data-node="shell" aria-pressed="false"><strong>explorer.exe</strong><small>PID 1288</small></button>
-        <button type="button" class="node" data-node="studio" aria-pressed="true"><strong>KernelScopeX.exe</strong><small>PID 9042</small></button>
-        <button type="button" class="node" data-node="browser" aria-pressed="false"><strong>browser.exe</strong><small>PID 6620</small></button>
-        <button type="button" class="node" data-node="lab" aria-pressed="false"><strong>scheduler-demo</strong><small>PID 8124</small></button>
-        <div class="map-footer">DEMO TREE · FICTIONAL RELATIONSHIPS · NOT YOUR DEVICE</div>
-      </div>
-      <aside class="process-panel reveal" aria-live="polite" aria-labelledby="process-name">
-        <div class="panel-label"><span>PROCESS DNA / INSPECTOR</span><span>↘ 01–05</span></div>
-        <h3 id="process-name">KernelScopeX.exe</h3>
-        <p class="process-description" id="process-desc">Inspect a process to see its resource usage and family relationship.</p>
-        <div class="facts">
-          <div class="kv"><span>PROCESS ID</span><strong id="process-pid">9042</strong></div>
-          <div class="kv"><span>PARENT PID</span><strong id="process-parent">1288</strong></div>
-          <div class="kv"><span>THREAD COUNT</span><strong id="process-threads">15</strong></div>
-          <div class="kv"><span>WORKING SET</span><strong id="process-memory">185 MiB</strong></div>
-          <div class="kv"><span>CPU UTILIZATION</span><strong id="process-cpu">2.4%</strong></div>
-          <div class="kv"><span>STATUS</span><strong id="process-status">Monitoring</strong></div>
-        </div>
-        <div class="panel-bottom"><span class="note">SAMPLE INSPECTION / 0% DEVICE ACCESS</span><a class="cta cta-secondary" href="demo.html#demo">TRY PROCESS SEARCH ↗</a></div>
-      </aside>
-    </div>
-  </section>
-
-  <section class="section shell" id="modules" aria-labelledby="modules-title">
-    <div class="section-top reveal"><div><p class="eyebrow">02 / FROM CODE TO INSIGHT</p><h2 class="section-title" id="modules-title">BUILT TO GO <em>DEEPER.</em></h2></div><p class="section-desc">Not another task list. A Windows-native monitoring utility paired with an educational space to understand OS concepts.</p></div>
-    <div class="feature-grid">
-      <article class="feature-card reveal"><div class="topline"><span>01 / MONITOR</span><span>IMPLEMENTED</span></div><div class="glyph" aria-hidden="true">%</div><h3>PERFORMANCE<br>OVERVIEW</h3><p>Sampled CPU and RAM, process counts, thread totals, and trends from genuine Windows APIs in the desktop app.</p><a href="demo.html#demo">VIEW BROWSER SHOWCASE ↗</a></article>
-      <article class="feature-card reveal"><div class="topline"><span>02 / INSPECT</span><span>IMPLEMENTED</span></div><div class="glyph alt" aria-hidden="true">⌘</div><h3>PROCESS<br>EXPLORER</h3><p>Search, sort and inspect running processes with PID/PPID, executable identity and permission-aware details.</p><a href="#workspace">EXPLORE PROCESS DNA ↗</a></article>
-      <article class="feature-card reveal"><div class="topline"><span>03 / DIAGNOSE</span><span>IMPLEMENTED</span></div><div class="glyph teal" aria-hidden="true">⌁</div><h3>EVENT<br>TIMELINE</h3><p>Track snapshot-based process appearance and disappearance, local exports, and sustained resource alerts.</p><a href="demo.html#demo">VIEW EXAMPLE EVENTS ↗</a></article>
-      <article class="feature-card reveal"><div class="topline"><span>04 / STUDY</span><span>IMPLEMENTED</span></div><div class="glyph teal" aria-hidden="true">≡</div><h3>SCHEDULING<br>LABORATORY</h3><p>Compare FCFS, SJF and Round Robin workloads using Gantt charts and turnaround/waiting metrics.</p><a href="#laboratory">TRY A COMPARISON ↗</a></article>
-      <article class="feature-card reveal"><div class="topline"><span>05 / MEMORY</span><span>WEB LAB READY</span></div><div class="glyph alt" aria-hidden="true">▦</div><h3>MEMORY<br>INTELLIGENCE</h3><p>Translate logical addresses, inspect a simulated TLB, and compare First Fit, Best Fit and Worst Fit step by step.</p><a href="memory-lab.html">OPEN INTERACTIVE MEMORY LAB ↗</a></article>
-      <article class="feature-card reveal"><div class="topline"><span>06 / INVESTIGATE</span><span>PLANNED</span></div><div class="glyph alt" aria-hidden="true">⌁</div><h3>HARDWARE &amp;<br>NETWORK</h3><p>Planned deeper insights into disk, GPU, thread details, and per-process network endpoints.</p><a href="#roadmap">SEE ROADMAP ↗</a></article>
-      <article class="feature-card reveal"><div class="topline"><span>07 / REPLAY</span><span>PLANNED</span></div><div class="glyph" aria-hidden="true">↺</div><h3>TIME<br>MACHINE</h3><p>Planned local monitoring session history for investigating earlier performance spikes.</p><a href="#roadmap">SEE ROADMAP ↗</a></article>
-    </div>
-  </section>
-
-  <section class="lab-section" id="laboratory" aria-labelledby="lab-title">
-    <div class="shell lab-layout">
-      <div class="lab-intro reveal">
-        <p class="eyebrow">03 / THEORY, MEET PRACTICE</p>
-        <h2 class="section-title" id="lab-title">CPU TIME.<br><em>YOUR RULES.</em></h2>
-        <p>What happens when processes arrive at different times? Switch scheduling algorithms and watch the Gantt chart and averages change. Every number here comes from a deterministic sample workload.</p>
-        <p class="mono" style="color:var(--soft);font-size:10px">P1(0,8) · P2(1,4) · P3(2,9) · P4(3,5)</p>
-        <a class="cta cta-primary" href="demo.html#demo">OPEN FULL SCHEDULING LAB <span class="arrow" aria-hidden="true">↗</span></a>
-      </div>
-      <div class="lab-board reveal">
-        <div class="bar-top"><span>ALGORITHM COMPARISON / SAMPLE JOBS</span><span>SIMULATED</span></div>
-        <div class="algo-tabs" role="group" aria-label="Select CPU scheduling algorithm">
-          <button type="button" data-algorithm="fcfs" aria-pressed="true">FCFS</button>
-          <button type="button" data-algorithm="sjf" aria-pressed="false">SJF</button>
-          <button type="button" data-algorithm="rr" aria-pressed="false">ROUND ROBIN</button>
-        </div>
-        <p id="lab-name" class="mono" style="font-size:10px;color:var(--soft);margin:13px 0 0">First Come First Served</p>
-        <div class="gantt" id="gantt-mini" aria-label="Simulated CPU scheduling Gantt chart"></div>
-        <div class="time-axis"><span>0 / START</span><span id="lab-finish">26</span><span>FINISH</span></div>
-        <div class="stat-row" aria-live="polite">
-          <div><small>AVG. WAITING</small><strong id="lab-wait">8.75</strong></div>
-          <div><small>AVG. TURNAROUND</small><strong id="lab-turn">15.25</strong></div>
-          <div><small>AVG. RESPONSE</small><strong id="lab-response">8.75</strong></div>
-        </div>
-        <p class="lab-note">Illustrative workload. The Windows desktop program does not modify your OS scheduler.</p>
+          <a class="lab-link" href="demo.html">Open full scheduling demo ↗</a>
+        </article>
+        <article class="lab-card">
+          <div class="lab-meta"><span>MEMORY MANAGEMENT</span><span>SIMULATED</span></div>
+          <h3>Where does an address go?</h3>
+          <p>Convert a logical address into a physical location using paging and your lecture's page-table example.</p>
+          <p class="workload">PAGE SIZE 1024 B · PAGES 0→5, 1→9, 2→1, 3→12</p>
+          <form class="memory-form" id="memory-form" autocomplete="off">
+            <label><span style="display:none">Logical address (bytes)</span><input id="logical-address" type="number" value="1500" min="0" max="1000000" step="1" aria-label="Logical address in bytes" required></label>
+            <button class="btn btn-primary" type="submit">Translate →</button>
+          </form>
+          <div class="memory-stats">
+            <div><small>PAGE</small><b id="page-number">1</b></div>
+            <div><small>OFFSET</small><b id="offset-number">476</b></div>
+            <div><small>FRAME</small><b id="frame-number">9</b></div>
+          </div>
+          <div class="memory-output" id="memory-output" role="status" aria-live="polite">
+            <small>PHYSICAL ADDRESS</small><strong id="physical-address">9,692</strong>
+            <p id="translation-info">Frame 9 × 1024 + 476 = 9692.</p>
+          </div>
+          <p class="workload" style="margin:11px 0 2px">TRY 5000 TO SEE AN UNMAPPED PAGE.</p>
+          <a class="lab-link" href="memory-lab.html">Open Memory Intelligence Lab ↗</a>
+        </article>
       </div>
     </div>
   </section>
 
-  <section class="section shell console-section" id="console" aria-labelledby="console-title">
-    <div class="reveal">
-      <p class="eyebrow">04 / DEVELOPER EXPERIMENT</p>
-      <h2 class="section-title" id="console-title">TALK TO<br>THE <em>KERNEL.</em></h2>
-      <p class="section-desc" style="margin:20px 0 28px">A playful, safe command console to explore the project. Try <code>help</code>, <code>processes</code>, <code>schedule</code>, or <code>status</code>. It's a website interaction, not a real shell.</p>
-      <button class="cta cta-secondary" id="copy-link" type="button">COPY GITHUB LINK <span class="arrow" aria-hidden="true">↗</span></button>
-    </div>
-    <div class="terminal reveal">
-      <div class="terminal-header"><span><span class="pulse"></span> KERNELSCOPE_X / CONSOLE</span><span>READ-ONLY / WEB DEMO</span></div>
-      <div class="terminal-window" id="terminal-window" aria-live="polite" aria-label="Command console output"></div>
-      <form class="terminal-form" id="terminal-form" autocomplete="off">
-        <label for="terminal-input">ksx@web:~$</label>
-        <input id="terminal-input" type="text" maxlength="90" aria-label="Demo command" placeholder="type help..." spellcheck="false" autocomplete="off">
-        <button type="submit">ENTER ↵</button>
-      </form>
+  <section class="section shaded" id="architecture">
+    <div class="wrap arch">
+      <div>
+        <div class="section-label">03 / HOW IT WORKS</div>
+        <h2>Real system data.<br><em>Clear boundaries.</em></h2>
+        <p>The Qt interface displays measurements gathered through documented Windows APIs on a background thread. Educational scheduling and paging calculations run separately and never alter the host system scheduler or page tables.</p>
+        <div class="arch-note">READ-ONLY BY DEFAULT · CONFIRMATION BEFORE ENDING PROCESSES</div>
+      </div>
+      <div class="flow" aria-label="Windows application architecture">
+        <div class="step"><span class="step-index">01</span><div><b>Qt Quick / QML</b><small>Interactive windows, process list, charts and OS laboratory</small></div></div>
+        <div class="flow-arrow" aria-hidden="true">↓</div>
+        <div class="step"><span class="step-index">02</span><div><b>C++20 monitoring controller</b><small>Background collection, models, alerts and snapshot exports</small></div></div>
+        <div class="flow-arrow" aria-hidden="true">↓</div>
+        <div class="step"><span class="step-index">03</span><div><b>Windows APIs</b><small>Real CPU time, physical memory, process and thread information</small></div></div>
+      </div>
     </div>
   </section>
 
-  <section class="section shell" id="roadmap">
-    <div class="section-top reveal"><div><p class="eyebrow">05 / SHIPPING PROGRESS</p><h2 class="section-title">THE ROAD <em>AHEAD.</em></h2></div><p class="section-desc">From a working native desktop foundation to a richer engineer-grade toolkit. Each release should be verified before it is called complete.</p></div>
-    <div class="roadmap">
-      <div class="reveal"><p class="num">01 / BUILT</p><h3>WINDOWS FOUNDATION</h3><p>v0.1.0 native build demonstrated; core monitoring, process exploration, diagnostics and OS scheduling simulator.</p></div>
-      <div class="reveal"><p class="num">02 / IN PROGRESS</p><h3>INTERFACE REFINEMENT</h3><p>v0.2.0 redesign and safe selection improvements, with further Windows acceptance testing needed.</p></div>
-      <div class="reveal"><p class="num">03 / PLANNED</p><h3>DEEPER INTELLIGENCE</h3><p>Network inspection, hardware data, persistent history, and new OS experiments including deadlocks.</p></div>
-    </div>
-  </section>
-  <section class="closer" aria-labelledby="closer-title"><div class="shell">
-    <p class="eyebrow">SYSTEMS ARE NOT BLACK BOXES.</p>
-    <h2 id="closer-title">GO BEYOND<br><span>THE TASK LIST.</span></h2>
-    <p>One project. Two experiences. A genuine Windows desktop utility and a browser showcase built to make Operating Systems concepts easier to see.</p>
-    <div class="actions">
-      <a class="cta cta-primary" href="demo.html#demo">EXPLORE THE INTERACTIVE DEMO <span class="arrow" aria-hidden="true">↗</span></a>
-      <a class="cta cta-secondary" href="https://github.com/sudip09-sys/KernelScope-X" target="_blank" rel="noopener noreferrer">VIEW C++ SOURCE <span class="arrow" aria-hidden="true">↗</span></a>
-    </div>
+  <section class="endcap"><div class="wrap endcap-inner">
+    <div><div class="section-label">KEEP EXPLORING</div><h2>Built to inspect. Made to explain.</h2><p>Try the full demos or explore the Windows application's open-source implementation.</p></div>
+    <div class="endcap-links"><a class="btn btn-primary" href="demo.html">Try the demo ↗</a><a class="btn" href="https://github.com/sudip09-sys/KernelScope-X" target="_blank" rel="noopener noreferrer">View source ↗</a></div>
   </div></section>
 </main>
-<footer class="site-footer"><div class="shell footer-inner"><span>© <span id="year">2026</span> KERNELSCOPE X / SAH SUDIP</span><span>BUILT WITH C++20 · QT 6 · CMAKE · WINDOWS API</span><a href="#overview">BACK TO TOP ↑</a></div></footer>
-<div class="palette" id="palette" hidden role="presentation">
-  <div class="palette-dialog" role="dialog" aria-modal="true" aria-label="Quick navigation command palette">
-    <div class="palette-header"><input id="palette-input" type="search" aria-label="Search navigation actions" placeholder="Where do you want to go?"><button type="button" id="palette-close" aria-label="Close quick navigation">✕</button></div>
-    <div class="palette-results" id="palette-results"></div>
-    <p class="palette-help">SHORTCUT: CTRL / ⌘ + K · ESC TO CLOSE</p>
-  </div>
-</div>
-<div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
-</body>
-</html>
+<footer class="footer"><div class="wrap footer-inner"><span>© 2026 KernelScope X · SAH SUDIP</span><span>Operating Systems · Gachon University</span><a href="#home">Back to top ↑</a></div></footer>
+</body></html>
