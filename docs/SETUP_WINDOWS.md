@@ -18,7 +18,7 @@ Official documentation:
 
 ## 2. Prepare the project
 
-Extract `KernelScope-X.zip` into a normal Windows folder, such as `C:\Users\<you>\Projects\KernelScope-X`.
+Download the [repository ZIP](https://github.com/sudip09-sys/KernelScope-X/archive/refs/heads/main.zip) or clone the repository into a normal Windows folder, such as `C:\Users\<you>\Projects\KernelScope-X`. The ZIP must be extracted before opening `CMakeLists.txt`.
 
 Open **Developer PowerShell for Visual Studio** and navigate to that folder:
 
