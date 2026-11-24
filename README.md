@@ -101,7 +101,7 @@ The `gh-pages` branch is deliberately website-only; `main` holds the native appl
 
 ## Documentation
 
-[Architecture](docs/ARCHITECTURE.md) · [Windows setup](docs/SETUP_WINDOWS.md) · [Test plan](docs/TEST_PLAN.md) · [Memory Lab](docs/MEMORY_LAB.md) · [Report outline](docs/PROJECT_REPORT_OUTLINE.md) · [Project vision / roadmap](docs/PROJECT_VISION.md) · [Changelog](CHANGELOG.md)
+[**Documentation index**](docs/README.md) · [Architecture](docs/ARCHITECTURE.md) · [Windows setup](docs/SETUP_WINDOWS.md) · [Test plan](docs/TEST_PLAN.md) · [Memory Lab](docs/MEMORY_LAB.md) · [Web deployment](docs/DEPLOYMENT.md) · [Report outline](docs/PROJECT_REPORT_OUTLINE.md) · [Project vision / roadmap](docs/PROJECT_VISION.md) · [Changelog](CHANGELOG.md)
 
 ---
 
