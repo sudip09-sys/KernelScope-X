@@ -1,5 +1,15 @@
 # KernelScope X — Changelog
 
+## 2026-11-24 — Repository organization
+
+- Replaced the oversized top-level README with a concise, current overview, while preserving the original project vision in `docs/PROJECT_VISION.md`.
+- Created a navigable documentation index and a guide explaining the different `main` and `gh-pages` web asset layouts.
+- Moved main-branch website styles and JavaScript into `assets/website/`; the existing homepage, browser demo and memory-lab URLs remain unchanged.
+- Preserved C++/Qt project sources, tests and native build configuration.
+
+**Scope:** Repository/documentation maintenance and static asset reorganization, not a new native feature release.
+
+
 ## 0.2.0 — Desktop and process explorer
 
 - Compact dark Windows interface with a resource selector, CPU and memory sparklines, and a shared history graph.
